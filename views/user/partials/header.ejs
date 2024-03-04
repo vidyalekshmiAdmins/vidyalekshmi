@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vibe Wave</title>
+
+
+  <link href="https://fonts.googleapis.com/css2?family=Your+Selected+Font&display=swap" rel="stylesheet">
+
+
+  <!-- Bootstrap CSS link from CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    /* Custom styles for the search box */
+    .form-outline {
+      position: relative;
+      width: 300px; /* Set the width of the search box */
+      margin: 0 auto; /* Center the search box */
+    }
+  
+    .form-outline input[type="search"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #030200;
+      border-radius: 5px;
+    }
+  
+    .form-outline label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: white;
+      padding: 0 5px;
+      font-size: 14px;
+      color: #ff9100;
+    }
+  
+    .form-outline input[type="search"]:focus + label,
+    .form-outline input[type="search"]:not(:placeholder-shown) + label {
+      transform: translate(-5px, -25px);
+      background-color: white;
+      padding: 0 5px;
+      font-size: 12px;
+      color: #080400;
+    }
+  
+    .form-outline button {
+      background-color: #ffa200;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      margin-left: -50px; /* Adjust the margin to align with the search box */
+    }
+
+
+
+    body {
+      font-family: 'Open Sans', sans-serif; /* Use the selected font */
+    }
+
+    
+    .nav-link {
+  background-color: #ffffff;
+  color: white;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+  background-color: #ff8500;
+}
+
+  </style>
+</head>
+
+<body>
+
+<!--Main Navigation-->
+<header>
+  <!-- Jumbotron -->
+  <div class="p-3 text-center bg-white border-bottom">
+    <div class="container">
+      <div class="row gy-3">
+        <!-- Left elements -->
+        <div class="col-lg-2 col-sm-4 col-4">
+          <a href="/about" target="_blank" class="float-start">
+            <img src="/users/img/icon.png"   height="66" width="120"/>
+          </a>
+        </div>
+        <!-- Left elements -->
+
+        <!-- Center elements -->
+        <div class="order-lg-last col-lg-5 col-sm-8 col-8">
+          <div class="d-flex float-end">
+            
+          
+           
+            <a href="/profile" class="me-1 border-0 rounded py-1 px-3 nav-link d-flex align-items-center">
+              <i class="fas fa-heart m-1 me-md-2"></i>
+              <img src="/users/img/profile1.png" alt="Profile Icon" style="width: 28px; height: 28px;">
+            </a>
+            
+            <a href="/shopCart" class="border-0 rounded py-1 px-3 nav-link d-flex align-items-center">
+              <i class="fas fa-shopping-cart m-1 me-md-2">
+
+                <img src="/users/img/cartIcon.png" alt="Cart Icon" style="width: 28px; height: 28px;">
+              </i>
+            </a>
+            
+            <a href="/logout" class="border-0 rounded py-1 px-3 nav-link d-flex align-items-center">
+              <i class="fas fa-shopping-cart m-1 me-md-2"></i>
+              <img src="/users/img/power1.png" alt="Cart Icon" style="width: 28px; height: 28px;">
+            </a>
+            
+
+
+           
+           
+            
+       
+
+          </div>
+        </div>
+        <!-- Center elements -->
+
+        <!-- Right elements -->
+        <div class="col-lg-5 col-md-12 col-12">
+          <div class="input-group float-center">
+            <div class="form-outline">
+              <input type="search" id="form1" class="form-control" />
+              <label class="form-label" for="form1" style="margin-top: 30px;">Search</label>
+            </div>
+            <!-- <button type="button" class="btn btn-primary shadow-0" style="margin-left: -100px;">
+              <i class="fas fa-search"></i>
+            </button> -->
+          </div>
+        </div>
+        
+        <!-- Right elements -->
+      </div>
+    </div>
+  </div>
+  <!-- Jumbotron -->
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white" >
+    <!-- Container wrapper -->
+    <div class="container justify-content-center justify-content-md-between">
+      <!-- Toggle button -->
+      <button
+              class="navbar-toggler border py-2 text-dark"
+              type="button"
+              data-mdb-toggle="collapse"
+              data-mdb-target="#navbarLeftAlignExample"
+              aria-controls="navbarLeftAlignExample"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+              >
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Collapsible wrapper -->
+      <div class="collapse navbar-collapse" id="navbarLeftAlignExample">
+        <!-- Left links -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          
+          
+          <li class="nav-item">
+            <a class="nav-link text-dark" aria-current="page" href="/home">Home</a>
+          </li>
+         
+         
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/productList">Categories</a>
+          </li>
+         
+    
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="#">Hot offers</a>
+          </li>
+         
+        
+         
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="#">Menu item</a>
+          </li>
+          
+          
+         
+         
+         
+          <!-- Navbar dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+              Others
+            </a>
+            <!-- Dropdown menu -->
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li>
+                <a class="dropdown-item" href="#">Action</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#">Another action</a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <!-- Left links -->
+      </div>
+    </div>
+    <!-- Container wrapper -->
+  </nav>
+  
