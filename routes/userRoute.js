@@ -21,7 +21,4 @@ user_route.use(bodyParser.urlencoded({ extended: true }));
 user_route.get('/signup', userAuth.isLogout, userController.loadUserRegistration);
 user_route.post('/signup', userAuth.isLogout, userController.userSignUP);
 
-user_route.get('/signin', userAuth.isLogout , userController.loadSignin)
-user_route.post('/signin', userAuth.isLogout , userController.verifySignin)
-
 module.exports = user_route; 

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const User = require("../model/userModel");
 const express = require('express');
 const user_route = express.Router();
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 // const asyncHandler = require("express-async-handler");
 // const { sendOtp } = require("../utility/nodeMailer");
 // const { generateOTP } = require("../utility/nodeMailer");
@@ -26,11 +26,14 @@ const loadUserRegistration = async (req, res) => {
 };
 
 
+
+
 //for user signup
 const userSignUP = async (req, res) => {
   try {
     const emailCheck = req.body.email;
     const checkData = await User.findOne({ email: emailCheck });
+
     if (checkData) {
   
       return res.render('./user/pages/signup', { userCheck: "User already exists, please try with a new email" });
@@ -49,8 +52,6 @@ const userSignUP = async (req, res) => {
         return res.render('./user/pages/userRegistration', { userCheck: "", passwordMatchError: "Password and confirm password do not match" });
       }
       
-
-
   // Create a new User instance
   const newUser = new User(userData);
 
@@ -79,44 +80,11 @@ const userSignUP = async (req, res) => {
 }
 
 
-//user login
-const loadSignin = async (req, res) => {
-  try {
-    res.render("./user/pages/userLogin",{ userCheck: " " });
-  } catch (error) {
-    throw new Error(error);
-  }
-};
 
 
-const verifySignin = async (req, res) => {
-  try {
-    const mobileNumber = req.body.mobileNumber;
-    const password = req.body.password;
-    const userData = await User.findOne({ mobileNumber: mobileNumber });
-
-    if (!mobileNumber || !password) {
-      res.render("./user/pages/userLogin", { userCheck: "Please enter both Mobile Number and Password" });
-    } else if (userData) {
-      const passwordMatch = await bcrypt.compare(password, userData.password);
-      if (userData.is_admin == 0) {
-        req.session.user_id = userData._id;
-        res.status(302).redirect("/home");
-      } else {
-        res.render("./user/pages/userLogin", { userCheck: "Mobile Number and Password is incorrect" });
-      }
-    } else {
-      res.render("./user/pages/userLogin", { userCheck: "Mobile Number and Password is incorrect" });
-    }
-  } catch (error) {
-    throw new Error(error);
-  }
-};
 
 
-module.exports ={ 
-  loadUserRegistration,
-  userSignUP,
-  loadSignin,
-  verifySignin
-}
+
+
+module.exports ={ loadUserRegistration,
+  userSignUP}
