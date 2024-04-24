@@ -34,18 +34,23 @@ index.use(
   })
 );
 
-// Serve static files
-index.use(express.static('public'));
-index.use('/user', express.static(__dirname + '/public/user'));
-
-// Set up express-ejs-layouts
-// index.use(expressLayouts);
-
-
 
 // Use routes after session middleware
 const userRoute = require('./routes/userRoute');
 index.use('/', userRoute);
+
+
+
+// Serve static files
+index.use(express.static('public'));
+index.use('/user', express.static(__dirname + '/public/user'));
+
+//Set up express-ejs-layouts
+index.use(expressLayouts);
+
+
+
+
 
 
 // const adminRoute = require('./routes/adminRoute');
