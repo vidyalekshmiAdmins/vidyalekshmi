@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("../model/userModel");
+const Otp = require("../model/otpModel")
 const express = require('express');
 const user_route = express.Router();
 const bcrypt = require("bcrypt");
@@ -84,12 +85,16 @@ const loadHome = async(req,res)=>{
 const loadUserRegistration = async (req, res) => {
   try {
     const User = req.session.user;
-
-    res.render("./user/pages/userRegistration",{ userCheck: " " });
+    res.render("user/pages/userRegistration", { userCheck: " " });
   } catch (error) {
-    throw new Error(error);
+    // Log the error or send an error response to the client
+    console.error(error);
+    res.status(500).send("Internal Server Error");
   }
 };
+
+
+
 
 
 
@@ -99,58 +104,91 @@ const userSignUP = async (req, res) => {
   try {
     const emailCheck = req.body.email;
     const checkData = await User.findOne({ email: emailCheck });
-
     if (checkData) {
-      return res.render('./user/pages/signup', { userCheck: "User already exists, please try with a new email" });
+  
+      return res.render('./user/pages/userRegistration', { userCheck: "User already exists, please try with a new email" });
     } else {
       const userData = {
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
-        mobileNumber: req.body.mobileNumber,
+      mobileNumber: req.body.mobileNumber,
       };
 
       const confirmPassword = req.body.confirmPassword;
 
-      // Check if the password and confirm password match
       if (userData.password !== confirmPassword) {
-        return res.render('./user/pages/userRegistration', { userCheck: "", passwordMatchError: "Password and confirm password do not match" });
+        return res.render('./user/pages/userRegistration', { userCheck: " ", passwordMatchError: "Password and confirm password do not match" });
       }
+      
+  const newUser = new User(userData);
 
-      // Create a new User instance
-      const newUser = new User(userData);
-
-      // Save the user to the database
-      await newUser.save();
-
-      // Send OTP after user is saved (assuming mobileNumber is valid)
-      await sendOtp(req.session.mobileNumber); // Call sendOtp function
-      res.render("./user/pages/verify", { userCheck: " " }); // Assuming verification page
+    await newUser.save();
+    console.log(newUser);
+    req.session.mobileNumber = req.body.mobileNumber
+    res.redirect('/verify')
     }
   } catch (error) {
     throw new Error(error);
   }
-};
+}
 
-const sendOtp = async (mobileNumber) => { // Assuming mobileNumber is provided
+
+
+const sendOtp = async(req,res)=>{
   try {
-    const otp = otpGenerator.generate(6, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
-    const cDate = new Date();
+    const mobileNumber  =  req.session.mobileNumber
+    const otp = otpGenerator.generate(6, { upperCaseAlphabets : false , specialChars : false , lowerCaseAlphabets : false})
+    const cDate = new Date()
     await Otp.findOneAndUpdate(
       { mobileNumber },
-      { otp, otpExpiration: new Date(cDate.getTime()) },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+      { otp , otpExpiration : new Date(cDate.getTime()) },
+      { upsert : true , new : true , setDefaultsOnInsert :true }
+    )
 
-    await twilioClient.messages.create({
-      body: `Your OTP is ${otp}`,
-      to: `+91 ${mobileNumber}`,
-      from: process.env.FROM_NUMBER
-    });
-  }catch (error) {
+      await twilioClient.messages.create({
+        body: `Your OTP is ${otp}`,
+        to : ` +91 ${mobileNumber}`,
+        from : process.env.FROM_NUMBER
+      })
+
+    res.render("./user/pages/verify", {userCheck:" "});
+
+  } catch (error) {
     throw new Error(error);
   }
-};
+}
+
+
+
+const verifyOtp = async(req,res) =>{
+  try {
+    const otp = req.body.otp
+    const mobileNumber = req.session.mobileNumber
+    const otpRecord = await Otp.findOne({mobileNumber})
+    if(!otpRecord){
+      return res.render('./user/pages/verify',{userCheck : 'OTP verification failed. Please try again.',resend : true})
+    }
+
+    const storedOtp = otpRecord.otp
+    console.log(otp,storedOtp);
+    const OTP_VALIDITY_DURATION = 1 * 60 * 1000;
+    const otpExpiration = otpRecord.otpExpiration + OTP_VALIDITY_DURATION
+    const otpExpirationDate = new Date(otpExpiration)
+    const currentTime = new Date()
+    console.log(currentTime,otpExpirationDate);
+    if(currentTime > otpExpirationDate){
+      return res.render('./user/pages/verify',{ userCheck : 'OTP has expired. Please request a new OTP.',resend : true })
+    }
+    if(otp === storedOtp){
+      res.redirect('/')
+    }else{
+      res.render("./user/pages/verify", { userCheck: "Incorrect OTP. Please try again.", resend: true })
+    }
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 
 
 
@@ -158,4 +196,6 @@ module.exports ={ loadUserRegistration,
   userSignUP,
   loadLogin,
   verifyLogin,
-  loadHome}
+  loadHome,
+  sendOtp,
+  verifyOtp }

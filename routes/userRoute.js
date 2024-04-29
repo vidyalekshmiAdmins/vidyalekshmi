@@ -19,23 +19,18 @@ user_route.use(bodyParser.json());
 user_route.use(bodyParser.urlencoded({ extended: true }));
 
 
-//for signup
+
+// Routes accessible only to logged out users
 user_route.get('/signup', userAuth.isLogout, userController.loadUserRegistration);
 user_route.post('/signup', userAuth.isLogout, userController.userSignUP);
 
+// Routes accessible only to logged in users
+user_route.get('/', userAuth.isLogin, userController.loadHome);
+user_route.get('/verify', userAuth.isLogin, userController.sendOtp);
+user_route.post('/verify', userAuth.isLogin, userController.verifyOtp);
 
+// Routes accessible to both logged in and logged out users
+user_route.get('/login', userAuth.isLogout, userController.loadLogin);
+user_route.post('/login', userAuth.isLogout, userController.verifyLogin);
 
-
-//for login 
-user_route.get('/login', userAuth.isLogout, userController.loadLogin)
-user_route.post('/login', userAuth.isLogout, userController.verifyLogin)
-
-
-
-
-//for home page 
-
-user_route.get('/', userAuth.isLogout, userController.loadHome)
-
-
-module.exports = user_route; 
+module.exports = user_route;

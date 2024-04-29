@@ -1,0 +1,42 @@
+<%- include('../partials/header') %>
+    <main>
+    <div class="container">
+        <div class="form-box" style="margin-top: 145px;">
+            <div class="form-tab">
+                <div class="tab-content">
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card-body">
+                                <h1 class="head card-title text-center"><b>Verification</b></h1>
+                                <br><br>
+                                <div class="text-center">
+                                    <% if (typeof userCheck !== 'undefined') { %>
+                                    <p style="color:crimson;"><%= userCheck %></p>
+                                    <% } %>
+                                </div>
+                                <form action="/verify" method="post" id="otpForm">
+                                    <div class="mb-3 position-relative custom-form-field">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-lock" aria-hidden="true"></i>
+                                            <input type="text" class="ms-2 form-control" style="margin-top: 2rem;border-radius: 4px;    padding: 0.85rem 4rem" id='otp' name="otp" onblur="nameChecking()" placeholder="Enter OTP">
+                                        </span>
+                                        <div id="errorname" class="mt-0 ms-2 position-absolute text-danger"></div>
+                                    </div>
+                                    <br>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">&nbsp;&nbsp;&nbsp;Submit&nbsp;&nbsp;&nbsp;</button>
+                                        <br><br>
+                                        <a class="text-decoration-none" href="/resendOtp" id="resendLink" style="margin-left: 15px; margin-right: 12px;">Resend OTP</a>
+                                        <br>
+                                        <span id="otp-expiry-time"></span>
+                                    </div>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>            
+    </div>
+</main>

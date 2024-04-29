@@ -6,36 +6,47 @@
   <title>Navbar</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
-    
-    .navbar-box {
-      background-color: rgba(255, 255, 255, 0.137);
-      padding: 10px;
-      border-radius: 40px;
-      border: 1px solid rgb(4, 3, 3);
-      z-index: 999;
-margin-top: 20px;
-height: 90px;
-width: 650px;
-    }
 
-    .navbar {
-      backdrop-filter: blur(5px);
-      background-color: transparent;
-    }
+
+.navbar-light{
+  height: 55px;
+  border-radius: 30px;
   
-    .navbar-nav .nav-link img {
-  height: 40px;
+
+}
+
+
+.navbar-box {
+
+  background-color: rgba(255, 255, 255, 0.137);
+  border-radius: 30px; /* Reduced border-radius */
+  border: 1px solid rgb(4, 3, 3);
+  z-index: 999;
+  margin-top: 20px; /* Adjusted margin */
+  height: 57px; /* Reduced height */
+  width: 650px;
+}
+
+
+.navbar {
+  backdrop-filter: blur(5px);
+  background-color: transparent;
+}
+
+.navbar-nav .nav-link img {
+max-height: 35px;
   transition: transform 0.3s ease;
   margin-right: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .navbar-nav .nav-link img:hover {
   transform: scale(1.5); 
 }
-  
-.navbar-nav .nav-link {
-  position: relative; 
-}
+
+
 
 .navbar-nav .nav-link .tooltip {
   position: absolute;
@@ -55,6 +66,10 @@ width: 650px;
 .navbar-nav .nav-link:hover .tooltip {
   opacity: 1;
 }
+
+
+
+
 
   </style>
 </head>
