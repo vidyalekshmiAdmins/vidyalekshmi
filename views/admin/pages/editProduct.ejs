@@ -1,0 +1,166 @@
+<div class="container">
+  <h2 mt-2>Edit Product</h2>
+
+  <form action="/admin/product/editProduct/<%= product._id %>" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+    <div class="card">
+      <div class="card-body">
+        <hr class="mb-4 mt-0">
+        <div class="row">
+          <div class="col-md-3">
+            <h6>1. General info</h6>
+          </div>
+          <div class="col-md-9">
+            <div class="mb-4">
+              <label class="form-label">Product title</label>
+              <input type="text" placeholder="Type here" value="<%= product.title %>" name="title" class="form-control">
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Description</label>
+              <textarea placeholder="Type here" class="form-control" name="description" rows="4"><%= product.description %></textarea>
+            </div>
+            <!-- <div class="mb-4">
+              <label class="form-label">Colors</label>
+              <input type="text" placeholder="Type here" name="color" value="<%= product.color %>" class="form-control">
+            </div> -->
+            <div class="mb-4">
+              <label class="form-label">Brand name</label>
+              <input placeholder="Type here" class="form-control" value="<%= product.brand %>" name="brand">
+            </div>
+            <!-- <div class="mb-4">
+              <label class="form-label">Size</label>
+              <input placeholder="Type here" class="form-control" value="<%= product.size %>" name="size">
+            </div> -->
+          </div> <!-- col.// -->
+        </div> <!-- row.// -->
+
+        <hr class="mb-4 mt-0">
+        <div class="row">
+          <div class="col-md-3">
+            <h6>2. Category</h6>
+          </div>
+          <div class="col-md-9">
+            <div class="mb-4">
+              <select class="form-select" name="categoryName" id="category" required>
+                <option value="<%= product.categoryName._id %>"><%= product.categoryName.categoryName %></option>
+                <% catList.forEach(category=> { %>
+                  <option value="<%= category?._id %>"><%= category.categoryName %></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <hr class="mb-4 mt-0">
+
+            <div class="row">
+              <div class="col-md-3">
+                <h6>3. Pricing</h6>
+              </div>
+              <div class="col-md-9">
+                <div class="mb-4">
+                  <label for="Productprice">Price</label>
+                  <input type="text" placeholder="₹" value="<%= product.Price %>" name="Price" class="form-control">
+                </div>
+              </div> <!-- col.// -->
+            </div> <!-- row.// -->
+
+            <hr class="mb-4 mt-0">
+
+            <div class="row">
+              <div class="col-md-3">
+                <h6>4. Units</h6>
+              </div>
+              <div class="col-md-9">
+                <div class="mb-4">
+                  <label for="Quantity">Quantity</label>
+                  <input type="text" placeholder="No's" value="<%= product.quantity %>" name="quantity" class="form-control">
+                </div>
+              </div> <!-- col.// -->
+            </div> <!-- row.// -->
+            <hr class="mb-4 mt-0">
+
+            <div class="row">
+              <div class="col-md-3">
+                <h6>5. Media</h6>
+              </div>
+              <div class="col-md-9">
+                <div class="card p-md-5 p-2 me-md-5">
+                  <h5>Choose product images </h5>
+                  <span class="fw-normal mb-4 text-success">file supports only: jpeg, jpg, png, webp</span>
+
+                  <span class="fw-bold">Select the Primary Image</span>
+                  <input type="file" accept=".jpg, .jpeg, .png, .webp, .svg" class="form-control FilUploader" name="primaryImage" class="mb-3" />
+                  <!-- hidden primary -->
+                  <input type="hidden" name="existingPrimaryImage" value="<%= product.primaryImage[0].name %>" />
+
+                  <!-- inputs -->
+                  <div class="col-md-6 mt-2 mr-5">
+                    <% product.primaryImage.forEach(image => { %>
+                      <img src="/admin/uploads/<%= image?.name; %>" class="max-size-image" alt="<%= image.name %>">
+                    <% }); %>
+                  </div>
+
+                  <span class="fw-bold">Select secondary images <br> <br>
+
+                    <% product.secondaryImages.forEach(image => { %>
+                      <input type="hidden" name="idSecondaryImage" value="<%= image._id  %>">
+                      <img src="/admin/uploads/<%= image?.name %>" class="max-size-image mb-3" alt="<%= image.name %>">
+                    <% }); %>
+
+                    <input type="file" accept=".jpg, .jpeg, .png, .webp, .svg" class="form-control FilUploader" name="secondaryImage" class="mb-3" multiple/><br>
+                </div>
+                <button type="submit" class="btn btn-primary mb-4 mt-2">Update Product</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  function validateForm() {
+    var title = document.querySelector('input[name="title"]').value;
+    var description = document.querySelector('textarea[name="description"]').value;
+    var color = document.querySelector('input[name="color"]').value;
+    var brand = document.querySelector('input[name="brand"]').value;
+    var size = document.querySelector('input[name="size"]').value;
+    var categoryName = document.querySelector('select[name="categoryName"]').value;
+    var price = document.querySelector('input[name="Price"]').value;
+    var quantity = document.querySelector('input[name="quantity"]').value;
+
+    // Validate required fields
+    if (!title || !description || !color || !brand || !size || !categoryName || !price || !quantity) {
+      alert("Please fill in all required fields.");
+      return false;
+    }
+
+    // You can add more specific validation if needed
+
+    return true;
+  }
+</script>
+
+<style>
+  .max-size-image {
+    max-width: 150px;
+    max-height: 150px;
+    width: auto;
+    height: auto;
+  }
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

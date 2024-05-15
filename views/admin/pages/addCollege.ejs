@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add College</title>
+</head>
+
+<body>
+  <div class="container">
+    <h2 mt-2>Add College</h2>
+
+    <form action="/admin/addCollege" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+      <div class="card">
+        <div class="card-body">
+          <hr class="mb-4 mt-0">
+          <div class="row">
+            <div class="col-md-3">
+              <h6>1. General info</h6>
+            </div>
+            <div class="col-md-9">
+              <div class="mb-4">
+                <label class="form-label">College name</label>
+                <input type="text" placeholder="Type here" name="name" id="name" class="form-control" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Address</label>
+                <textarea placeholder="Type here" class="form-control" name="address" id="address" rows="4" required></textarea>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">District</label>
+                <input placeholder="Type here" class="form-control" name="district" type="text" id="district" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Pincode</label>
+                <input placeholder="Type here" class="form-control" name="pincode" type="text" id="pincode" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Country</label>
+                <input placeholder="Type here" class="form-control" name="country" type="text" id="country" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">State</label>
+                <input placeholder="Type here" class="form-control" name="state" type="text" id="state" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Type</label>
+                <select class="form-select" name="type" id="type" required>
+                  <option value="aided">Aided</option>
+                  <option value="un-aided">Un-aided</option>
+                  <option value="govt">Government</option>
+                </select>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Category</label>
+                <select class="form-select" name="category" id="category" required>
+                  <option value="mens">Mens</option>
+                  <option value="women">Women</option>
+                  <option value="mixed">Mixed</option>
+                </select>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Courses</label>
+                <input placeholder="Type here" class="form-control" name="courses" type="text" id="courses">
+                <span class="form-text">Separate multiple courses with commas (e.g., Engineering, Medicine)</span>
+              </div>
+            </div>
+          </div>
+          <hr class="mb-4 mt-0">
+          <div class="row">
+            <div class="col-md-3">
+              <h6>2. Media</h6>
+            </div>
+            <div class="col-md-9">
+              <div class="card p-md-5 p-2 me-md-5">
+                <h5>Choose college images</h5>
+                <span class="fw-normal mb-4 text-success">File supports only: jpeg, jpg, png, webp</span>
+                <span class="fw-bold">Select the Primary Image</span>
+                <input type="file" accept=".jpg,.jpeg,.png,.webp" class="form-control" name="images" multiple required />
+              </div>
+            </div>
+          </div>
+          <hr class="mb-4 mt-0">
+          <button type="submit" class="btn btn-primary mb-4 mt-2">Add College</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+
+
+</html>

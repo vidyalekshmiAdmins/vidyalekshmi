@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College List</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+  .college-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.college-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.college-item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.college-details {
+  padding: 20px;
+}
+
+.college-details h2 {
+  margin-top: 0;
+}
+
+.college-details p {
+  margin-bottom: 0;
+}
+
+.add-college-button {
+ 
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      
+    }
+
+    .add-college-button:hover {
+      background-color: #0056b3;
+    }
+
+
+
+    .delete-button {
+      margin-left: 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s;
+  }
+
+  .delete-button img {
+    width: 24px; /* Adjust the width and height as needed */
+    height: 24px;
+  }
+
+  .delete-button:hover {
+    transform: scale(1.1); /* Add a hover effect */
+  }
+
+</style>
+<body>
+<br>
+  <h1>College List</h1>
+<br>
+
+  <div class="add-college-container">
+    <!-- Button to add a college -->
+    <button class="add-college-button" onclick="window.location.href='/admin/addCollege'">Add College</button>
+  </div>
+
+<br>
+<div><% if (colleges && colleges.length > 0) { %>
+  <div class="college-container">
+    <% colleges.forEach(college => { %>
+      <div class="college-item">
+        <a method="get" href="/admin/collegeDetails?id=<%= college._id %>" class="college-link">
+          <img src="<%= college.images[0].path %>" alt="<%= college.name %>"> <!-- Displaying the first image of the college -->
+          <div class="college-details">
+            <h2><%= college.name %></h2>
+            <p><strong>State:</strong> <%= college.state %></p> <!-- Accessing the state field -->
+          </div>
+        </a>
+        <!-- Delete option -->
+        <form action="/admin/deleteCollege/<%= college._id %>" method="POST" onsubmit="return confirmDelete();">
+          <button type="submit" class="delete-button">
+            <img src="/admin/assets/imgs/icons/bin.png" alt="Delete">
+          </button>
+        </form>
+        
+      </div>
+    <% }); %>
+  </div>
+  
+  
+  
+<% } else { %>
+  <h1>No colleges added yet!</h1>
+<% } %></div>
+  
+</body>
+
+<script>
+  // JavaScript function to display confirmation message before deleting
+  function confirmDelete() {
+    // Display a confirmation dialog
+    const confirmation = confirm('Are you sure you want to delete this college?');
+    
+    // Return true if user confirms, false otherwise
+    return confirmation;
+  }
+</script>
+
+</html>

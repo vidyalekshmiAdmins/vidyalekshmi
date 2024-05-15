@@ -51,10 +51,12 @@ index.use(expressLayouts);
 
 
 
+index.use(express.static('public'));
+index.use('/admin', express.static(__dirname + '/public/admin'));
+index.use(expressLayouts);
 
-
-// const adminRoute = require('./routes/adminRoute');
-// index.use('/admin', adminRoute);
+const adminRoute = require('./routes/adminRoute');
+index.use('/admin', adminRoute);
 
 index.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

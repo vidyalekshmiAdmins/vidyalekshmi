@@ -1,0 +1,50 @@
+<!-- college-details.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <br>
+    <title>College Details</title>
+    <!-- Add your CSS stylesheets or link to CDN here -->
+    <style>
+        /* Add your custom CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>College Details</h1>
+
+    <div>
+        <a href="/admin/editCollege?id=<%= college._id %>" class="edit-button">Edit College Details</a>
+    </div>
+    <div>
+        <br>
+        <br>
+        <h2><%= college.name %></h2>
+        <p><strong>District:</strong> <%= college.district %></p>
+        <p><strong>Pincode:</strong> <%= college.pincode %></p>
+        <p><strong>Country:</strong> <%= college.country %></p>
+        <p><strong>State:</strong> <%= college.state %></p>
+        <p><strong>Address:</strong> <%= college.address %></p>
+        <h3>Images:</h3>
+        <div>
+            <% college.images.forEach((image) => { %>
+                <img src="<%= image.path %>" alt="<%= image.name %>" width="200">
+            <% }); %>
+        </div>
+        <p><strong>Type:</strong> <%= college.type %></p>
+        <p><strong>Category:</strong> <%= college.category %></p>
+        <h3>Courses:</h3>
+        <ul>
+            <% college.courses.forEach((course) => { %>
+                <li><%= course %></li>
+            <% }); %>
+        </ul>
+    </div>
+    <!-- Add your JavaScript scripts or link to CDN here -->
+    <script>
+        // Add your JavaScript logic here
+    </script>
+</body>
+</html>

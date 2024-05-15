@@ -1,0 +1,75 @@
+<!-- editCollege.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit College Details</title>
+    <!-- Add your CSS stylesheets or link to CDN here -->
+    <style>
+        /* Add your custom CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Edit College Details</h1>
+    <form action="/admin/updateCollege" method="POST">
+        <!-- Input fields to edit college details -->
+        <input type="hidden" name="id" value="<%= college._id %>">
+        <div>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" value="<%= college.name %>" required>
+        </div>
+        <div>
+            <label for="district">District:</label>
+            <input type="text" id="district" name="district" value="<%= college.district %>" required>
+        </div>
+        <div>
+            <label for="pincode">Pincode:</label>
+            <input type="text" id="pincode" name="pincode" value="<%= college.pincode %>" required>
+        </div>
+        <div>
+            <label for="country">Country:</label>
+            <input type="text" id="country" name="country" value="<%= college.country %>" required>
+        </div>
+        <div>
+            <label for="state">State:</label>
+            <input type="text" id="state" name="state" value="<%= college.state %>" required>
+        </div>
+        <div>
+            <label for="address">Address:</label>
+            <input type="text" id="address" name="address" value="<%= college.address %>" required>
+        </div>
+        <div>
+            <label for="type">Type:</label>
+            <select id="type" name="type" required>
+                <option value="aided" <%= college.type === 'aided' ? 'selected' : '' %>>Aided</option>
+                <option value="un-aided" <%= college.type === 'un-aided' ? 'selected' : '' %>>Un-aided</option>
+                <option value="govt" <%= college.type === 'govt' ? 'selected' : '' %>>Government</option>
+            </select>
+        </div>
+        <div>
+            <label for="category">Category:</label>
+            <select id="category" name="category" required>
+                <option value="mens" <%= college.category === 'mens' ? 'selected' : '' %>>Men's</option>
+                <option value="women" <%= college.category === 'women' ? 'selected' : '' %>>Women's</option>
+                <option value="mixed" <%= college.category === 'mixed' ? 'selected' : '' %>>Mixed</option>
+            </select>
+        </div>
+        <div>
+            <label for="courses">Courses:</label>
+            <input type="text" id="courses" name="courses" value="<%= college.courses.join(', ') %>" required>
+            <small>Enter comma-separated values</small>
+        </div>
+        <div>
+          <label for="newImages">Add New Images:</label>
+          <input type="file" id="newImages" name="newImages" accept="image/*" multiple>
+      </div>
+        <button type="submit">Update</button>
+    </form>
+    <!-- Add your JavaScript scripts or link to CDN here -->
+    <script>
+        // Add your JavaScript logic here
+    </script>
+</body>
+</html>
