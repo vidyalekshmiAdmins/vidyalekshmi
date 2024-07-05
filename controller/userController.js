@@ -29,34 +29,44 @@ const loadLogin = async(req,res)=>{
   }
 }
 
+
+
+
+
+
 const verifyLogin = async(req,res)=>{
   try {
-    const mobile = req.body.mobileNumber;
-    console.log("mobile:",mobile);
+    const identifier = req.body.identifier;
     const password = req.body.password;
-    const userData = await User.findOne({ mobileNumber: mobile });
-    console.log("userData",userData);
-    if (!mobile || !password) {
-      res.render("./user/pages/userLogin", { userCheck: "Please enter both mobile and password" });
-    } else if (userData) {
-      // const passwordMatch = await bcrypt.compare(password, userData.password);
-      // console.log(passwordMatch);
+
+    if (!identifier || !password) {
+      res.render("./user/pages/userLogin", { userCheck: "Please enter both identifier and password" });
+    } 
+
+    const isEmail = identifier.includes('@')
+    let userData
+    
+    if(isEmail){
+      userData = await User.findOne({ email: identifier })
+    }else{
+      userData = await User.findOne({ mobileNumber: identifier })
+    }
+
+    if (userData) {
       if (password === userData.password) {
         req.session.user_id = userData._id;
         console.log(userData._id);
         res.status(302).redirect("/");
       } else {
-        res.render("./user/pages/userLogin", { userCheck: "Mobile and Password is incorrect" });
+        res.render("./user/pages/userLogin", { userCheck: "Identifier and Password is incorrect" });
       }
     } else {
-      res.render("./user/pages/userLogin", { userCheck: "Mobile and Password is incorrect" });
+      res.render("./user/pages/userLogin", { userCheck: "Identifier and Password is incorrect" });
     }
   } catch (error) {
     throw new Error(error);
   }
 }
-
-
 
 
 
@@ -99,7 +109,6 @@ const loadUserRegistration = async (req, res) => {
 
 
 
-
 const userSignUP = async (req, res) => {
   try {
     const emailCheck = req.body.email;
@@ -132,6 +141,7 @@ const userSignUP = async (req, res) => {
     throw new Error(error);
   }
 }
+
 
 
 
@@ -192,10 +202,25 @@ const verifyOtp = async(req,res) =>{
 
 
 
+//for user registration
+const loadUniversityServices = async (req, res) => {
+  try {
+    const User = req.session.user;
+    res.render("user/pages/universityServices", { userCheck: " " });
+  } catch (error) {
+    // Log the error or send an error response to the client
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+
 module.exports ={ loadUserRegistration,
   userSignUP,
   loadLogin,
   verifyLogin,
   loadHome,
   sendOtp,
-  verifyOtp }
+  verifyOtp,
+  loadUniversityServices }

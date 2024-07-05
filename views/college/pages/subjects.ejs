@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <style>
+    .box {
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+    .box:hover {
+      background-color: #f1f1f1;
+      border-color: #ccc;
+    }
+    .box h2 {
+      margin-top: 0;
+    }
+    .course-button, .add-subject-button {
+      margin: 10px;
+      padding: 10px 20px;
+      display: inline-block;
+      text-decoration: none;
+      background-color: #4CAF50;
+      color: white;
+      border: 1px solid #4CAF50;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    }
+    .course-button:hover, .add-subject-button:hover {
+      background-color: #45a049;
+      border-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>All Subjects  <%= department.deptName %></h1>
+
+  <div class="box" onclick="location.href='/departments/<%= department.deptId %>/edit-hod'">
+    <h2>HOD</h2>
+    <% if (department.hod) { %>
+      <p><%= department.hod %></p>
+    <% } else { %>
+      <p>HOD details not yet added</p>
+    <% } %>
+  </div>
+
+  <div class="box">
+    <h2>Subjects</h2>
+    <% if (subjects.length > 0) { %>
+      <% subjects.forEach(subject => { %>
+        <div class="course-button"><%= subject.name %></div>
+      <% }); %>
+    <% } else { %>
+      <p>No subjects added yet.</p>
+    <% } %>
+  </div>
+
+  <a href="/college/<%= deptId %>/allSubjects" class="add-subject-button">Add Subject</a>
+
+</body>
+</html>

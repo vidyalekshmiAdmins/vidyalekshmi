@@ -1,0 +1,89 @@
+<%- include('../partials/header') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Services</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+
+.text-black {
+color: black !important;
+    }
+
+    
+    body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.bg-image {
+    background-image: url('/user/img/uniService.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.text-white {
+    color: rgb(4, 4, 4);
+}
+
+.btn-option {
+    background-color: rgba(255, 255, 255, 0.8);
+    color: black;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    padding: 15px 30px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-option:hover {
+    background-color: rgba(255, 255, 255, 1);
+    color: black;
+}
+
+</style>
+<body>
+    
+    <div class="container-fluid d-flex flex-column align-items-center justify-content-center text-center min-vh-100 bg-image">
+
+  
+        <div class="col-md-12 text-center">
+            <h1 class="text-black font-weight-bold">UNIVERSITY SERVICES</h1>
+            <p class="text-black">We provide you the best and reliable university services</p>
+          </div>
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <a href="/applyForCertificate" class="btn btn-option btn-block">APPLY FOR CERTIFICATES</a>
+            </div>
+            
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <button class="btn btn-option btn-block">CREDIT TRANSFER</button>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <button class="btn btn-option btn-block">COUNCIL REQUESTS</button>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <button class="btn btn-option btn-block">ACADEMIC CREDENTIAL EVALUATION</button>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <button class="btn btn-option btn-block">PRIVATE REGISTRATION</button>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                <button class="btn btn-option btn-block">RE ADMISSION & RE REGISTRATION</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

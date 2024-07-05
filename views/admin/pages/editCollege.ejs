@@ -56,11 +56,7 @@
                 <option value="mixed" <%= college.category === 'mixed' ? 'selected' : '' %>>Mixed</option>
             </select>
         </div>
-        <div>
-            <label for="courses">Courses:</label>
-            <input type="text" id="courses" name="courses" value="<%= college.courses.join(', ') %>" required>
-            <small>Enter comma-separated values</small>
-        </div>
+     
         <div>
           <label for="newImages">Add New Images:</label>
           <input type="file" id="newImages" name="newImages" accept="image/*" multiple>

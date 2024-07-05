@@ -2,6 +2,20 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 
+const imageSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  path: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+});
+
+
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -19,6 +33,9 @@ const userSchema = new mongoose.Schema({
   mobileNumber: {
     type: String,
     
+  },
+  image: {
+    type:  [imageSchema], 
   },
  
 }, { timestamps: true });

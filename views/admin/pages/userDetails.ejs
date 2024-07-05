@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Add additional styles here */
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .user-details {
+            padding: 20px;
+        }
+
+        .user-details p {
+            margin: 0;
+            margin-bottom: 10px;
+        }
+
+        .user-details strong {
+            font-weight: bold;
+        }
+
+        .user-details img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>User Details</h3>
+        <div class="user-details">
+            <p><strong>Username:</strong> <%= user.username %></p>
+            <p><strong>Email:</strong> <%= user.email %></p>
+            <p><strong>Password:</strong> <%= user.password %></p> <!-- Note: You might want to hide this field for security reasons -->
+            <p><strong>Mobile Number:</strong> <%= user.mobileNumber %></p>
+            <% if (user.image) { %>
+                <p><strong>Image:</strong></p>
+                <img src="<%= user.image %>" alt="User Image">
+            <% } %>
+            <p><strong>Created At:</strong> <%= user.createdAt %></p>
+            <p><strong>Updated At:</strong> <%= user.updatedAt %></p>
+        </div>
+    </div>
+</body>
+</html>

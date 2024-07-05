@@ -47,6 +47,8 @@ adminRoute.get('/dashboard',adminAuth.isLogin , adminController.loadDashboard);
 
 
 adminRoute.get('/user',adminAuth.isLogin , adminController.userManagement)
+adminRoute.get('/userDetails/:id', adminAuth.isLogin , adminController. getUserDetails);
+
 //adminRoute.post('/user/search',adminController.searchUser)
 adminRoute.get("/useractions",adminAuth.isLogin , adminController.userAction);
 
@@ -100,6 +102,36 @@ adminRoute.get('/editCollege', adminAuth.isLogin, adminController.loadEditColleg
 adminRoute.post('/updateCollege', adminAuth.isLogin, adminController.updateCollegeDetails);
 
 adminRoute.post('/deleteCollege/:id', adminAuth.isLogin,adminController.deleteCollege);
+
+
+
+
+adminRoute.get('/services', adminAuth.isLogin, adminController.loadService);
+
+
+// Load the schema edit page
+adminRoute.get('/EditPage', adminAuth.isLogin, adminController.loadEditPage);
+
+// Add a new field to the schema
+adminRoute.post('/updateSchema', adminAuth.isLogin, adminController.addFieldToSchema);
+
+// Remove a field from the schema
+adminRoute.post('/removeField', adminAuth.isLogin, adminController.removeFieldFromSchema);
+
+
+
+
+adminRoute.get('/department', adminAuth.isLogin, adminController.viewDepartments);
+
+adminRoute.get('/department/add', adminAuth.isLogin, adminController.loadAddDepartment);
+
+adminRoute.post('/department/add', adminAuth.isLogin, adminController.addDepartment);
+
+adminRoute.get('/department/:id/subjects', adminAuth.isLogin, adminController.loadDepartmentSubjects);
+
+adminRoute.get('/department/:id/subjects/add', adminAuth.isLogin, adminController.loadAddSubject);
+
+adminRoute.post('/department/:id/subjects/add', adminAuth.isLogin, adminController.addSubject);
 
 
 module.exports = adminRoute;

@@ -6,6 +6,35 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Add College</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script>
+    function validateForm() {
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      // Ensure strong password
+      const passwordPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+      if (!passwordPattern.test(password)) {
+        alert('Password must be at least 8 characters long, contain at least one number, one uppercase and one lowercase letter.');
+        return false;
+      }
+
+      // Ensure passwords match
+      if (password !== confirmPassword) {
+        alert('Passwords do not match');
+        return false;
+      }
+
+      // Validate established year
+      const establishedIn = document.getElementById('establishedIn').value;
+      if (!/^\d+$/.test(establishedIn) || parseInt(establishedIn) <= 0) {
+        alert('Established year should be a positive integer.');
+        return false;
+      }
+
+      return true;
+    }
+  </script>
 </head>
 
 <body>
@@ -24,6 +53,10 @@
               <div class="mb-4">
                 <label class="form-label">College name</label>
                 <input type="text" placeholder="Type here" name="name" id="name" class="form-control" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Email</label>
+                <input type="email" placeholder="Type here" name="email" id="email" class="form-control" required>
               </div>
               <div class="mb-4">
                 <label class="form-label">Address</label>
@@ -62,9 +95,27 @@
                 </select>
               </div>
               <div class="mb-4">
-                <label class="form-label">Courses</label>
-                <input placeholder="Type here" class="form-control" name="courses" type="text" id="courses">
-                <span class="form-text">Separate multiple courses with commas (e.g., Engineering, Medicine)</span>
+                <label class="form-label">Number of Faculty</label>
+                <select class="form-select" name="noOfFaculty" id="noOfFaculty" required>
+                  <option value="10+">10+</option>
+                  <option value="30+">30+</option>
+                  <option value="50+">50+</option>
+                  <option value="100+">100+</option>
+                  <option value="300+">300+</option>
+                  <option value="500+">500+</option>
+                </select>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Established In</label>
+                <input type="text" placeholder="Type here" name="establishedIn" id="establishedIn" class="form-control" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Password</label>
+                <input type="password" placeholder="Type here" name="password" id="password" class="form-control" required>
+              </div>
+              <div class="mb-4">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" placeholder="Type here" name="confirmPassword" id="confirmPassword" class="form-control" required>
               </div>
             </div>
           </div>
@@ -89,6 +140,5 @@
     </form>
   </div>
 </body>
-
 
 </html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Schema</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Edit Application Schema</h2>
+        <form id="editSchemaForm" method="POST" action="/admin/updateSchema">
+            <div class="form-group">
+                <label for="fieldName">Field Name</label>
+                <input type="text" class="form-control" id="fieldName" name="fieldName" required>
+            </div>
+            <div class="form-group">
+                <label for="fieldType">Field Type</label>
+                <input type="text" class="form-control" id="fieldType" name="fieldType" required>
+            </div>
+            <div class="form-group">
+                <label for="fieldDescription">Field Description</label>
+                <input type="text" class="form-control" id="fieldDescription" name="fieldDescription">
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+        
+        <hr>
+
+        <h2>Schema Fields</h2>
+        <% if (schemaFields) { %>
+            <ul class="list-group">
+                <% for (let [key, value] of Object.entries(schemaFields)) { %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <%= key %> - <%= value.instance %> <small>(<%= value.options.description %> || 'No description')</small>
+                        <form method="POST" action="/admin/removeField" class="ml-3">
+                            <input type="hidden" name="fieldName" value="<%= key %>">
+                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                    </li>
+                <% } %>
+            </ul>
+        <% } else { %>
+            <p>No schema fields found.</p>
+        <% } %>
+    </div>
+</body>
+</html>

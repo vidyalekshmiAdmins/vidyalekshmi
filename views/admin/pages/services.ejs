@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Grid Page with Buttons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #4CAF50;
+            padding: 10px;
+            text-align: center;
+        }
+
+        header button {
+            background-color: #ffffff;
+            border: none;
+            color: #4CAF50;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        header button:hover {
+            background-color: #45a049;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .item {
+            flex: 1 1 calc(33.333% - 40px);
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        .item button {
+            width: 100%;
+            padding: 20px;
+            font-size: 16px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .item button:hover {
+            background-color: #ddd;
+        }
+
+        @media (max-width: 900px) {
+            .item {
+                flex: 1 1 calc(50% - 40px);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .item {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button>Button 1</button>
+        <button>Button 2</button>
+        <button>Button 3</button>
+        <button>Button 4</button>
+    </header>
+
+    <div class="container">
+      <div class="item">
+        <a href="/admin/EditPage">
+            <button>APPLY FOR CERTIFICATES</button>
+        </a>
+    </div>
+    
+        <div class="item"><button>CREDIT TRANSFER</button></div>
+        <div class="item"><button>COUNCIL REQUEST</button></div>
+        <div class="item"><button>ACADEMIC CREDENTIAL EVALUATION</button></div>
+        <div class="item"><button>PRIVATE REGISTRATION</button></div>
+        <div class="item"><button>RE ADMISSION & RE REGISTRATION</button></div>
+    </div>
+</body>
+</html>

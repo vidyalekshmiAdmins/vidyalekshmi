@@ -1,44 +1,54 @@
 <style>
-    .content-main {
-      padding: 20px;
-    }
-  
-    .container {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-  
-    h3 {
-      color: #333;
-    }
-  
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-  
-    th,
-    td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #ddd;
-    }
-  
-    th {
-      background-color: #f2f2f2;
-    }
-  
-    .badge {
-      padding: 8px;
-      border-radius: 4px;
-    }
-  
-    .btn-sm {
-      margin-right: 5px;
-    }
+   .confirmation-message {
+    display: none;
+    padding: 10px;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.content-main {
+    padding: 20px;
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.badge {
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.btn-sm {
+    margin-right: 5px;
+}
   
     /* Add more styles based on your preferences */
   </style>
@@ -60,7 +70,7 @@
         <tbody>
           <% users.forEach(user => { %>
           <tr>
-            <td><%= user.username %></td>
+            <td><a href="/admin/userDetails/<%= user._id %>"><%= user.username %></a></td>
             <td><%= user.email %></td>
   
             <td>

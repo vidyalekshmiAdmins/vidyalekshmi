@@ -50,6 +50,7 @@ index.use(expressLayouts);
 
 
 
+//for activating admin route
 
 index.use(express.static('public'));
 index.use('/admin', express.static(__dirname + '/public/admin'));
@@ -57,6 +58,22 @@ index.use(expressLayouts);
 
 const adminRoute = require('./routes/adminRoute');
 index.use('/admin', adminRoute);
+
+
+//for activating college route
+
+
+const collegeRoute = require('./routes/collegeRoute');
+index.use('/college', collegeRoute);
+
+index.use(express.static('public'));
+index.use('/college', express.static(__dirname + '/public/college'));
+index.use(expressLayouts);
+
+
+
+
+
 
 index.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

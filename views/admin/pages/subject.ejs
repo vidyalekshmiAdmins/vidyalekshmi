@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= department.name %> Subjects</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      margin: 0;
+    }
+    .add-subject-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .add-subject-btn:hover {
+      background-color: #0056b3;
+    }
+    .subject-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .subject-card {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      width: calc(33% - 20px);
+      box-sizing: border-box;
+    }
+    .subject-card h2 {
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Subjects in <%= department.name %></h1>
+      <a href="/admin/department/<%= department._id %>/subjects/add" class="add-subject-btn">Add Subject</a>
+    </div>
+
+    <% if (message) { %>
+      <div class="alert alert-info"><%= message %></div>
+    <% } else { %>
+      <div class="subject-list">
+        <% subjects.forEach(subject => { %>
+          <div class="subject-card">
+            <h2><%= subject.name %></h2>
+            <% if (subject.numberOfSemesters) { %>
+              <p><strong>Number of Semesters:</strong> <%= subject.numberOfSemesters %></p>
+            <% } %>
+            <% if (subject.feesPerSemester) { %>
+              <p><strong>Fees Per Semester:</strong> <%= subject.feesPerSemester %></p>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

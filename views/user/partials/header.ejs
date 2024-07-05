@@ -3,81 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Navbar</title>
+  <title>Responsive Navbar</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
+    .navbar-light {
+      height: 55px;
+      border-radius: 30px;
+    }
 
+    .navbar-box {
+      background-color: rgba(255, 255, 255, 0.137);
+      border-radius: 30px;
+      border: 1px solid rgb(4, 3, 3);
+      z-index: 999;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90%; /* Default width for smaller screens */
+      max-width: 650px; /* Maximum width to prevent excessive width on large screens */
+    }
 
-.navbar-light{
-  height: 55px;
-  border-radius: 30px;
-  
+    .navbar {
+      backdrop-filter: blur(5px);
+      background-color: transparent;
+    }
 
-}
+    .navbar-nav .nav-link img {
+      max-height: 35px;
+      transition: transform 0.3s ease;
+      margin-right: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
+    .navbar-nav .nav-link img:hover {
+      transform: scale(1.5);
+    }
 
-.navbar-box {
+    .navbar-nav .nav-link .tooltip {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
 
-  background-color: rgba(255, 255, 255, 0.137);
-  border-radius: 30px; /* Reduced border-radius */
-  border: 1px solid rgb(4, 3, 3);
-  z-index: 999;
-  margin-top: 20px; /* Adjusted margin */
-  height: 57px; /* Reduced height */
-  width: 650px;
-}
+    /* Show tooltip on hover */
+    .navbar-nav .nav-link:hover .tooltip {
+      opacity: 1;
+    }
 
+    @media (min-width: 576px) {
+      .navbar-box {
+        width: 400px; /* Adjusted width for small devices */
+      }
+    }
 
-.navbar {
-  backdrop-filter: blur(5px);
-  background-color: transparent;
-}
+    @media (min-width: 768px) {
+      .navbar-box {
+        width: 500px; /* Adjusted width for medium devices */
+      }
+    }
 
-.navbar-nav .nav-link img {
-max-height: 35px;
-  transition: transform 0.3s ease;
-  margin-right: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+    @media (min-width: 992px) {
+      .navbar-box {
+        width: 600px; /* Adjusted width for large devices */
+      }
+    }
 
-.navbar-nav .nav-link img:hover {
-  transform: scale(1.5); 
-}
-
-
-
-.navbar-nav .nav-link .tooltip {
-  position: absolute;
-  bottom: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 5px;
-  font-size: 12px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-/* Show tooltip on hover */
-.navbar-nav .nav-link:hover .tooltip {
-  opacity: 1;
-}
-
-
-
-
-
+    @media (min-width: 1200px) {
+      .navbar-box {
+        width: 650px; /* Adjusted width for extra large devices */
+      }
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
   <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-12">
       <div class="navbar-box">
         <nav class="navbar navbar-expand-lg navbar-light">
           <a class="navbar-brand" href="#">Your Logo</a>
@@ -112,14 +125,14 @@ max-height: 35px;
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="/login">
                   <img src="/user/img/profile.png" alt="profile" />
                   <span class="tooltip">Profile</span>
                 </a>
               </li>
+              
             </ul>
           </div>
-          
         </nav>
       </div>
     </div>

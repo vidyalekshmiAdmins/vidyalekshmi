@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <style>
+    .box {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    function searchSubjects() {
+      const query = document.getElementById('searchBox').value;
+      window.location.href = `/college/subjects?q=${query}`;
+    }
+  </script>
+</head>
+<body>
+  <h1>Add Course</h1>
+  <input type="text" id="searchBox" placeholder="Search subjects..." value="<%= searchQuery %>">
+  <button onclick="searchSubjects()">Search</button>
+  
+  <div>
+    <% if (subjects.length > 0) { %>
+      <% subjects.forEach(subject => { %>
+        <div class="box" onclick="window.location.href='/college/subjects/<%= deptId %>/add/<%= subject._id %>'">
+          <h3><%= subject.name %></h3>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <p>No subjects found</p>
+    <% } %>
+  </div>
+
+  <a href="/college/subjects/add"><button>Add Subject</button></a>
+</body>
+</html>

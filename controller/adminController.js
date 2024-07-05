@@ -1,6 +1,10 @@
 const College = require('../model/collegeModel');
 const User = require('../model/userModel');
+const Department = require('../model/departmentModel');
+const Subject = require('../model/subjectModel');
 const multer = require('multer');
+const ApplyCertificate = require("../model/applyCertificate");
+const bcrypt = require('bcrypt');
 
 const admin={
   ADMIN_PASSWORD:  "admin123",
@@ -54,6 +58,25 @@ const loadDashboard = async (req, res) => {
 };
 
 
+
+//All things related to User
+
+//for showing the user details
+const getUserDetails = async (req, res) => {
+  try {
+      // Fetch user details from the database
+      const user = await User.findById(req.params.id);
+      if (!user) {
+          return res.status(404).send('User not found');
+      }
+
+      // Render the userDetail.ejs file with the user details
+      res.render('./admin/pages/userDetails', { title: 'userDetails', user: user });
+  } catch (error) {
+      console.error('Error fetching user details:', error);
+      res.status(500).send('Internal Server Error');
+  }
+};
 
 // User Management
 const userManagement = async (req, res) => {
@@ -128,18 +151,8 @@ const loadAddCollege = async (req, res) => {
   }
 };
 
-
 const addCollege = async (req, res) => {
   try {
-    // Check for duplicate college based on name and district
-    const existingCollege = await College.findOne({
-      name: req.body.name,
-      district: req.body.district
-    });
-    if (existingCollege) {
-      return res.status(400).json({ message: 'College with this name already exists in the district!' });
-    }
-
     const {
       name,
       district,
@@ -149,14 +162,54 @@ const addCollege = async (req, res) => {
       address,
       type,
       category,
-      courses
+      password,
+      confirmPassword,
+      email,
+      noOfFaculty,
+      establishedIn
     } = req.body;
+
+    // Check if password and confirmPassword match
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    // Check if email is valid
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: 'Invalid email format' });
+    }
+
+    // Check for duplicate college based on name and district
+    const existingCollege = await College.findOne({
+      name,
+      district,
+      email
+    });
+    if (existingCollege) {
+      return res.status(400).json({ message: 'College with this name already exists in the district!' });
+    }
+
+    // Check for duplicate email
+    const existingEmail = await College.findOne({ email });
+    if (existingEmail) {
+      return res.status(400).json({ message: 'Email is already in use' });
+    }
+
+    // Validate establishedIn is a positive integer
+    if (!Number.isInteger(parseInt(establishedIn)) || parseInt(establishedIn) <= 0) {
+      return res.status(400).json({ message: 'Established year should be a positive integer.' });
+    }
 
     // Extracting image details from the request
     const images = req.files.map(file => ({
       name: file.originalname,
       path: file.path
     }));
+
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create college object
     const college = new College({
@@ -169,7 +222,10 @@ const addCollege = async (req, res) => {
       images,
       type,
       category,
-      courses: courses.split(',').map(course => course.trim())
+      password: hashedPassword,
+      email,
+      noOfFaculty,
+      establishedIn
     });
 
     // Save the college to the database
@@ -181,7 +237,6 @@ const addCollege = async (req, res) => {
     res.status(500).json({ message: 'Error adding college' });
   }
 };
-
 
 
 
@@ -295,7 +350,7 @@ const updateCollegeDetails = async (req, res) => {
         address: req.body.address,
         type: req.body.type,
         category: req.body.category,
-        courses: req.body.courses.split(',').map((course) => course.trim()),
+       
         // images: updatedImages,
         // Add more fields as needed
       },
@@ -315,7 +370,6 @@ const updateCollegeDetails = async (req, res) => {
 
 
 
-
 const deleteCollege = async (req, res) => {
   try {
     const id = req.params.id;
@@ -327,10 +381,210 @@ const deleteCollege = async (req, res) => {
       return res.status(404).json({ message: 'College not found' });
     }
 
-    res.status(200).json({ message: 'College deleted successfully', deletedCollege });
+    // Also delete all associated departments
+    await Department.updateMany({ collegeId: id }, { collegeId: null });
+
+    // Destroy session for the college
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+      }
+      res.status(200).json({ message: 'College and associated data deleted successfully', deletedCollege });
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error deleting college' });
+  }
+};
+
+
+
+
+
+//for services page 
+const loadService = async (req, res) => {
+  try {
+    res.render('./admin/pages/services', { title: 'services' });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+
+
+
+
+
+const loadEditPage = (req, res) => {
+  try {
+    const schemaFields = ApplyCertificate.schema.paths;
+    res.render('./admin/pages/applyCertificate', {title: 'applyCertificate', schemaFields });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+
+
+
+
+// for editing and making changes in the service field
+const addFieldToSchema = async (req, res) => {
+  const { fieldName, fieldType, fieldDescription } = req.body;
+
+  if (!fieldName || !fieldType) {
+    return res.status(400).send({ error: 'Field name and type are required.' });
+  }
+
+  try {
+    ApplyCertificate.schema.add({
+      [fieldName]: {
+        type: mongoose.Schema.Types[fieldType],
+        description: fieldDescription || ''
+      }
+    });
+
+    res.redirect('/admin/EditPage');
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+const removeFieldFromSchema = async (req, res) => {
+  const { fieldName } = req.body;
+
+  if (!fieldName) {
+    return res.status(400).send({ error: 'Field name is required.' });
+  }
+
+  try {
+    ApplyCertificate.schema.remove(fieldName);
+    res.redirect('/admin/EditPage');
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+
+
+
+
+
+// for viewing department
+const viewDepartments = async (req, res) => {
+  try {
+    const departments = await Department.find();
+
+    if (departments.length === 0) {
+      return res.render('./admin/pages/cource1', { departments: null, message: 'No departments exist yet.', title: 'viewDepartments' });
+    } else {
+      res.render('./admin/pages/cource1', { departments, message: null, title: 'viewDepartments' });
+    }
+  } catch (error) {
+    console.error('Error loading departments:', error.message, error.stack);
+    res.status(500).json({ message: 'Error loading departments', error: error.message });
+  }
+};
+
+
+// Render add department page
+const loadAddDepartment = async (req, res) => {
+  try {
+    res.render('./admin/pages/addDepartment', { title: 'Add Department' });
+  } catch (error) {
+    console.error('Error loading add department page:', error.message);
+    res.status(500).json({ message: 'Error loading add department page', error: error.message });
+  }
+};
+
+
+
+
+// Handle adding a new department
+const addDepartment = async (req, res) => {
+  try {
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: 'Department name is required' });
+    }
+
+    const newDepartment = new Department({ name });
+    await newDepartment.save();
+
+    res.redirect('/admin/department'); // Redirect to the departments list page
+  } catch (error) {
+    console.error('Error adding department:', error.message);
+    res.status(500).json({ message: 'Error adding department', error: error.message });
+  }
+};
+
+
+
+
+
+const loadDepartmentSubjects = async (req, res) => {
+  try {
+    const departmentId = req.params.id;
+    const department = await Department.findById(departmentId);
+    if (!department) {
+      return res.status(404).render('./admin/pages/subject', { department: null, subjects: [], message: 'Department not found',  title: 'load Department Subjects'  });
+    }
+
+    const subjects = await Subject.find({ 'department._id': departmentId });
+
+    res.render('./admin/pages/subject', {
+      department,
+      subjects,
+      message: subjects.length === 0 ? 'No subjects added yet' : null,
+      title: 'load Department Subjects'   });
+  } catch (error) {
+    console.error('Error loading department subjects:', error.message);
+    res.status(500).json({ message: 'Error loading department subjects', error: error.message });
+  }
+};
+
+
+
+
+
+const loadAddSubject = async (req, res) => {
+  try {
+    const department = await Department.findById(req.params.id);
+    if (!department) {
+      return res.status(404).json({ message: 'Department not found' });
+    }
+
+    res.render('./admin/pages/addSubject', { department, title: 'Add Subject' });
+  } catch (error) {
+    console.error('Error loading add subject page:', error.message);
+    res.status(500).json({ message: 'Error loading add subject page', error: error.message });
+  }
+};
+
+
+
+const addSubject = async (req, res) => {
+  try {
+    const { name, numberOfSemesters, feesPerSemester } = req.body;
+    const department = await Department.findById(req.params.id);
+
+    if (!department) {
+      return res.status(400).json({ message: 'Invalid department ID' });
+    }
+
+    const newSubject = new Subject({
+      name,
+      department: { _id: department._id, name: department.name },
+      
+    });
+
+    await newSubject.save();
+
+    res.redirect(`/admin/department/${department._id}/subjects`);
+  } catch (error) {
+    console.error('Error adding subject:', error.message);
+    res.status(500).json({ message: 'Error adding subject', error: error.message });
   }
 };
 
@@ -342,6 +596,7 @@ module.exports = {
   login,
   userManagement,
  searchUser,
+ getUserDetails,
   userAction,
   collegeList,
   loadCollegeDetails,
@@ -349,5 +604,15 @@ module.exports = {
   addCollege,
   loadEditCollege,
   updateCollegeDetails,
-  deleteCollege
+  deleteCollege,
+  loadService,
+  loadEditPage,
+  addFieldToSchema,
+  removeFieldFromSchema,
+  viewDepartments,
+  addDepartment,
+  loadAddDepartment,
+  loadDepartmentSubjects,
+  loadAddSubject,
+  addSubject
 };

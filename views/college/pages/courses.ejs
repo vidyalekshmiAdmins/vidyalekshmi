@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .header h2 {
+      margin: 0;
+    }
+    .add-course-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .add-course-btn:hover {
+      background-color: #0056b3;
+    }
+    .course-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .course-item {
+      background-color: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .course-item h5 {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Courses</h2>
+      <a href="/college/departments" class="add-course-btn">Add Course</a>
+    </div>
+
+    <% if (message) { %>
+      <div class="alert alert-info"><%= message %></div>
+    <% } else { %>
+      <ul class="course-list">
+        <% courses.forEach(course => { %>
+          <li class="course-item">
+            <h5>
+              <a href="/college/<%= course.deptId._id %>/subjects"><%= course.deptId.name %></a>
+              (ID: <%= course.deptId._id %>)
+            </h5>
+            <% if (course.deptId.hod) { %>
+              <p><strong>HOD:</strong> <%= course.deptId.hod %></p>
+            <% } else { %>
+              <p><em>No HOD assigned</em></p>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+</body>
+</html>

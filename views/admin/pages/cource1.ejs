@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Departments</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .header h2 {
+      margin: 0;
+    }
+    .add-dept-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .add-dept-btn:hover {
+      background-color: #0056b3;
+    }
+    .department-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .department-item {
+      background-color: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .department-item h5 {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>Departments</h2>
+      <a href="/admin/department/add" class="add-dept-btn">Add Department</a>
+    </div>
+
+    <% if (message) { %>
+      <div class="alert alert-info"><%= message %></div>
+    <% } else { %>
+      <ul class="department-list">
+        <% departments.forEach(department => { %>
+          <li class="department-item">
+            <h5>
+              <a href="/admin/department/<%= department._id %>/subjects"><%= department.name %></a>
+              (ID: <%= department._id %>)
+            </h5>
+            <% if (department.hod) { %>
+              <p><strong>HOD:</strong> <%= department.hod %></p>
+            <% } else { %>
+              <p><em>No HOD assigned</em></p>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </div>
+</body>
+</html>

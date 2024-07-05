@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Course</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    .departments-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .department-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      width: 200px;
+      text-align: center;
+    }
+    .department-item input {
+      margin-top: 10px;
+    }
+    .no-departments {
+      font-style: italic;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Add Course</h1>
+  <form action="/college/departments/search" method="get">
+    <input type="text" name="q" placeholder="Search departments...">
+    <button type="submit">Search</button>
+  </form>
+  <form action="/college/departments/add" method="POST">
+    <div class="departments-container">
+      <% if (departments.length === 0) { %>
+        <p class="no-departments">No departments found.</p>
+      <% } else { %>
+        <% departments.forEach(department => { %>
+          <div class="department-item">
+            <p><%= department.name %></p>
+            <input type="checkbox" name="departments[]" value="<%= department._id %>">
+          </div>
+        <% }); %>
+      <% } %>
+    </div>
+    <button type="submit">Add Selected Departments</button>
+  </form>
+</body>
+</html>
