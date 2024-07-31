@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Management Colleges in India | Admissions</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<style>
+  body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  background-color: #f1f1f1;
+  padding: 10px 0;
+}
+
+.logo {
+  float: left;
+  font-size: 2em;
+  font-weight: bold;
+  color: #333;
+}
+
+nav {
+  float: right;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav li {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+}
+
+main {
+  padding-top: 40px;
+}
+
+.hero {
+  background-image: url("images/hero-banner.jpg");  /* Replace with your hero banner image */
+  background-size: cover;
+  background-position: center;
+  padding: 100px 0;
+  color: #fff;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 1.2em;
+  margin-bottom: 40px;
+}
+
+.hero form {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.hero input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex-grow: 1;
+}
+</style>
+<body>
+ 
+
+  <main>
+    <section class="banner">
+      <div class="container">
+        <h1>Management Colleges</h1>
+        <p>Find the perfect Management program for your career goals.</p>
+      </div>
+    </section>
+
+    <section class="college-filters">
+      <div class="container">
+        <h2>Filter Colleges</h2>
+        <form action="#">
+          <div class="filter-group">
+            <label for="location">Location:</label>
+            <select name="location" id="location">
+              <option value="">All Locations</option>
+              <option value="delhi">Delhi</option>
+              <option value="mumbai">Mumbai</option>
+              <option value="bangalore">Bangalore</option>
+              <option value="others">Other Cities</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label for="specialization">Specialization:</label>
+            <select name="specialization" id="specialization">
+              <option value="">All Specializations</option>
+              <option value="mba">MBA</option>
+              <option value="pgdm">PGDM</option>
+              <option value="executive-mba">Executive MBA</option>
+            </select>
+          </div>
+          <button type="submit">Filter</button>
+        </form>
+      </div>
+    </section>
+
+  
+    <section class="college-listings">
+      <h2>Colleges Offering <%= department.deptName %></h2>
+      <ul class="college-list">
+        <% college.courses.forEach(course => { %>
+          <% if (course.deptId.equals(department._id)) { %>
+            <li>
+              <a href="#">
+                <img src="images/<%= college.name %>.jpg" alt="<%= college.name %>">  <h3><%= college.name %></h3>
+                <p>Location: <%= college.location %></p> </a>
+            </li>
+          <% } %>
+        <% }); %>
+      </ul>
+    </section>
+
+  </main>
+
+ 
+
+<script src="script.js"></script>
+</body>
+</html>

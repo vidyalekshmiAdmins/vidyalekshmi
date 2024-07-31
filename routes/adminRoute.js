@@ -26,6 +26,8 @@ const upload = multer({ storage: storage });
 
 
 
+
+
 adminRoute.use(express.json());
 adminRoute.use(express.urlencoded({ extended: true }));
 adminRoute.use((req, res, next) => {

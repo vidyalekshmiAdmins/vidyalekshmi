@@ -246,24 +246,35 @@ const searchDepartments = async (req, res) => {
 
 
 
+
 const getSubjectsByDept = async (req, res) => {
   try {
     const { deptId } = req.params;
+    const collegeId = req.session.collegeId;
 
-    // Find the college that contains this department
-    const college = await College.findOne({ "courses.deptId": deptId }, { "courses.$": 1 });
+    // Find the college document containing the specified department
+    const college = await College.findOne({ "courses.deptId": deptId });
+
+    // Check if college is found
     if (!college) {
+      return res.status(404).send('College not found');
+    }
+
+    // Extract department details from the found college course
+    const department = college.courses.find(course => course.deptId.equals(deptId));
+
+    if (!department) {
       return res.status(404).send('Department not found');
     }
 
-    const department = college.courses[0];
-    const subjects = department.subjects || [];
+    // Extract subjects belonging to the department
+    const deptSubjects = department.subjects;
 
     res.render('./college/pages/subjects', {
-      subjects,
-      department,
+      subjects: deptSubjects,
+      department, // Now contains the entire department object
       deptId,
-      title: 'Subjects'
+      title: `All Subjects ${department.deptName}`
     });
   } catch (error) {
     console.error(error);
@@ -279,36 +290,42 @@ const getSubjectsByDept = async (req, res) => {
 // Get All Subjects
 const getAllSubjects = async (req, res) => {
   try {
-    const searchQuery = req.query.q || '';
+    const { deptId } = req.params;
     const collegeId = req.session.collegeId;
-    const deptId = req.params.deptId; // Get department ID from request parameters
+    const searchQuery = req.query.q || '';
 
-    if (!collegeId) {
-      return res.status(401).send('Unauthorized');
-    }
+    // Find all subjects linked to the specified department ID
+    const allSubjects = await Subject.find({ 'department._id': deptId });
 
-    // Fetch the college
-    const college = await College.findById(collegeId);
+    // Find the college document containing the specified department
+    const college = await College.findOne({ "courses.deptId": deptId });
+
+    // Check if college is found
     if (!college) {
       return res.status(404).send('College not found');
     }
 
-    // Find the specific department
-    const department = college.courses.find(course => course.deptId.toString() === deptId);
-    if (!department) {
-      return res.status(404).send('Department not found');
-    }
+    // Extract subjects belonging to the department
+    const deptSubjects = college.courses.find(course => course.deptId.equals(deptId)).subjects.map(subject => subject.subjectId.toString());
 
-    // Collect all subject IDs from the department's subjects
-    const collegeSubjectIds = department.subjects ? department.subjects.map(subject => subject.subjectId) : [];
+    // Filter subjects that are not already listed in the college's courses
+    const filteredSubjects = allSubjects.filter(subject => !deptSubjects.includes(subject._id.toString()));
 
-    // Fetch subjects that are not already in the department's list
-    const subjects = await Subject.find({
-      name: new RegExp(searchQuery, 'i'),
-      _id: { $nin: collegeSubjectIds }
+    // Apply search filter (case-insensitive)
+    const searchedSubjects = searchQuery
+      ? filteredSubjects.filter(subject => subject.name.toLowerCase().includes(searchQuery.toLowerCase()))
+      : filteredSubjects;
+
+    // Extract department details from the found college course
+    const department = college.courses.find(course => course.deptId.equals(deptId));
+
+    res.render('./college/pages/addSubject', {
+      subjects: searchedSubjects,
+      department,
+      deptId,
+      title: 'Subjects',
+      searchQuery, // Pass search query to the template
     });
-
-    res.render('./college/pages/addSubject', { subjects, title: 'Subjects', department, deptId, searchQuery });
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -335,7 +352,7 @@ const searchSubjects = async (req, res) => {
 
 // Add Selected Subjects
 const addSelectedSubjects = async (req, res) => {
-  const { selectedSubjects, noOfSemesters, feePerSemester } = req.body;
+  const { selectedSubjects, noOfSemesters, feePerSemester, deptId } = req.body;
   const collegeId = req.session.collegeId;
 
   if (!collegeId) {
@@ -348,17 +365,27 @@ const addSelectedSubjects = async (req, res) => {
       return res.status(404).send('College not found');
     }
 
-    const subjectsToAdd = JSON.parse(selectedSubjects);
-    subjectsToAdd.forEach(subjectId => {
-      const subject = college.subjects.find(s => s.subjectId.toString() === subjectId);
+    const subjectsToAdd = Array.isArray(selectedSubjects) ? selectedSubjects : [selectedSubjects];
+
+    for (const subjectId of subjectsToAdd) {
+      const subject = await Subject.findById(subjectId);
+
       if (!subject) {
-        college.subjects.push({
+        return res.status(404).send(`Subject with ID ${subjectId} not found`);
+      }
+
+      const course = college.courses.find(course => course.deptId.equals(deptId));
+      const existingSubject = course.subjects.find(s => s.subjectId.toString() === subjectId);
+
+      if (!existingSubject) {
+        course.subjects.push({
           subjectId,
+          name: subject.name,
           noOfSemesters,
           feePerSemester,
         });
       }
-    });
+    }
 
     await college.save();
     res.redirect('/college/dashboard');
@@ -367,6 +394,7 @@ const addSelectedSubjects = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
 
 
 

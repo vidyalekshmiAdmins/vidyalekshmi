@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const User = require("../model/userModel");
 const Otp = require("../model/otpModel")
+const College = require('../model/collegeModel');
+const Department = require('../model/departmentModel');
+const Subject = require('../model/subjectModel');
 const express = require('express');
 const user_route = express.Router();
 const bcrypt = require("bcrypt");
@@ -215,12 +218,62 @@ const loadUniversityServices = async (req, res) => {
 };
 
 
+  const loadAdmissions = async (req, res) => {
+    try {
+      const colleges = await College.find({});
+      const departments = await Department.find({});
+      const subjects = await Subject.find({});
 
-module.exports ={ loadUserRegistration,
+      res.render("./user/pages/admissions", {
+        colleges,
+        departments,
+        subjects,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Server error');
+    }
+  };
+
+
+  
+
+
+  const loadDeptAdmissions = async (req, res) => {
+    try {
+      const { deptId } = req.params;
+  
+      // Find the college with the specified department
+      const college = await College.findOne({ 'courses.deptId': deptId });
+  
+      if (!college) {
+        return res.status(404).send('College not found');
+      }
+  
+      // Extract department details
+      const department = college.courses.find(course => course.deptId.equals(deptId));
+  
+      res.render('./user/pages/deptAdmissions', {
+        college,
+        department,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Server error');
+    }
+  };
+  
+
+
+
+module.exports ={
+  loadUserRegistration,
   userSignUP,
   loadLogin,
   verifyLogin,
   loadHome,
   sendOtp,
   verifyOtp,
-  loadUniversityServices }
+  loadUniversityServices,
+  loadAdmissions,
+  loadDeptAdmissions}

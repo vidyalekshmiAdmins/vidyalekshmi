@@ -4,11 +4,35 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const user_route = express.Router();
 const userController = require('../controller/userController.js');
+const multer = require('multer');
 const servicesController = require('../controller/servicesController.js');
 const userAuth = require('../middleware/userAuth');
 const mongoose = require('mongoose');
 const config = require('../config/config');
 const session = require('express-session');
+
+
+
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    
+    cb(null, path.join(__dirname, '../public/user/uploads'));},
+
+
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
+
+
+
+
+
+
 
 user_route.use(session({
   secret: config.sessionSecret,
@@ -34,6 +58,11 @@ user_route.post('/verify', userAuth.isLogin, userController.verifyOtp);
 user_route.get('/login', userAuth.isLogout, userController.loadLogin);
 user_route.post('/login', userAuth.isLogout, userController.verifyLogin);
 
+
+// Route for loading the admissions page
+user_route.get('/admissions', userController.loadAdmissions);
+
+user_route.get('/departments/:deptId',  userController.loadDeptAdmissions);
 
 // Routes accessible to university services
 user_route.get('/universityServices', userController.loadUniversityServices);

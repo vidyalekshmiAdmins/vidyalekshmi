@@ -7,7 +7,10 @@ const departmentSchema = new Schema({
     required: true,
     trim: true,
   },
-
+  image: {
+    type: String,
+    trim: true,
+  },
 });
 
 module.exports = mongoose.model('Department', departmentSchema);

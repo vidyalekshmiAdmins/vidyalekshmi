@@ -7,7 +7,7 @@ const subjectSchema = new Schema({
     required: true,
     trim: true,
   },
-  department: {
+  department: [{
     _id: {
       type: Schema.Types.ObjectId,
       ref: 'Department',
@@ -18,8 +18,7 @@ const subjectSchema = new Schema({
       required: true,
       trim: true,
     },
-  },
-
+  }],
 });
 
 module.exports = mongoose.model('Subject', subjectSchema);

@@ -499,8 +499,6 @@ const loadAddDepartment = async (req, res) => {
 
 
 
-
-// Handle adding a new department
 const addDepartment = async (req, res) => {
   try {
     const { name } = req.body;
@@ -509,7 +507,20 @@ const addDepartment = async (req, res) => {
       return res.status(400).json({ message: 'Department name is required' });
     }
 
-    const newDepartment = new Department({ name });
+    // Access uploaded image information (if using Multer)
+    let image = '';
+    if (req.file) {
+      image = req.file.path; // Assuming the path is stored in req.file.path
+    } else {
+      // Handle case where no image is uploaded (optional: set a default image path)
+    }
+
+    // Validate image path (optional)
+    if (image && !isValidImagePath(image)) { // Call your validation function
+      return res.status(400).json({ message: 'Invalid image path' });
+    }
+
+    const newDepartment = new Department({ name, image });
     await newDepartment.save();
 
     res.redirect('/admin/department'); // Redirect to the departments list page
@@ -518,6 +529,7 @@ const addDepartment = async (req, res) => {
     res.status(500).json({ message: 'Error adding department', error: error.message });
   }
 };
+
 
 
 

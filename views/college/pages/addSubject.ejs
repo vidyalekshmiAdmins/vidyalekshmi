@@ -9,13 +9,17 @@
       padding: 20px;
       margin: 20px 0;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      cursor: pointer;
     }
   </style>
   <script>
     function searchSubjects() {
       const query = document.getElementById('searchBox').value;
       window.location.href = `/college/subjects?q=${query}`;
+    }
+
+    function submitForm() {
+      const form = document.getElementById('subjectsForm');
+      form.submit();
     }
   </script>
 </head>
@@ -24,18 +28,29 @@
   <input type="text" id="searchBox" placeholder="Search subjects..." value="<%= searchQuery %>">
   <button onclick="searchSubjects()">Search</button>
   
-  <div>
-    <% if (subjects.length > 0) { %>
-      <% subjects.forEach(subject => { %>
-        <div class="box" onclick="window.location.href='/college/subjects/<%= deptId %>/add/<%= subject._id %>'">
-          <h3><%= subject.name %></h3>
-        </div>
-      <% }); %>
-    <% } else { %>
-      <p>No subjects found</p>
-    <% } %>
-  </div>
-
-  <a href="/college/subjects/add"><button>Add Subject</button></a>
+  <form id="subjectsForm" action="/college/subjects/add" method="POST">
+    <input type="hidden" name="deptId" value="<%= deptId %>">
+    <div>
+      <% if (subjects.length > 0) { %>
+        <% subjects.forEach(subject => { %>
+          <div class="box">
+            <input type="checkbox" name="selectedSubjects" value="<%= subject._id %>">
+            <h3><%= subject.name %></h3>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <p>No subjects found</p>
+      <% } %>
+    </div>
+    <div>
+      <label for="noOfSemesters">Number of Semesters:</label>
+      <input type="number" id="noOfSemesters" name="noOfSemesters" required>
+    </div>
+    <div>
+      <label for="feePerSemester">Fee per Semester:</label>
+      <input type="number" id="feePerSemester" name="feePerSemester" required>
+    </div>
+    <button type="button" onclick="submitForm()">Add Subject</button>
+  </form>
 </body>
 </html>
