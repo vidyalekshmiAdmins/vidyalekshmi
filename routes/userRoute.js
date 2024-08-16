@@ -40,6 +40,8 @@ user_route.use(session({
   saveUninitialized: false
 }));
 
+
+
 user_route.use(bodyParser.json());
 user_route.use(bodyParser.urlencoded({ extended: true }));
 
@@ -59,15 +61,26 @@ user_route.get('/login', userAuth.isLogout, userController.loadLogin);
 user_route.post('/login', userAuth.isLogout, userController.verifyLogin);
 
 
-// Route for loading the admissions page
-user_route.get('/admissions', userController.loadAdmissions);
 
-user_route.get('/departments/:deptId',  userController.loadDeptAdmissions);
 
-// Routes accessible to university services
+
+
 user_route.get('/universityServices', userController.loadUniversityServices);
 user_route.get('/applyForCertificate', servicesController.loadApplyForCertificate);
 user_route.post('/applyForCertificate', servicesController.applyForCertificate);
 
 
+
+
+// Route for loading the admissions page
+user_route.get('/admissions', userController.loadAdmissions);
+user_route.get('/departments/:deptId', userController.loadDeptAdmissions);
+
+user_route.get('/collegeApplication/:collegeId', userController.loadCollegeApplication);
+
+user_route.get('/admissionApplication/:collegeId', userController.loadApplicationForm);
+
+// Route for handling form submission
+
+user_route.post('/apply/submit/:collegeId', userController.submitApplication);
 module.exports = user_route;

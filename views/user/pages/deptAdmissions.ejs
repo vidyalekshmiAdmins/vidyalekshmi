@@ -1,152 +1,214 @@
+<%- include('../partials/header') %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Management Colleges in India | Admissions</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<style>
-  body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
-}
+  <title>Admissions | <%= department.name %> Colleges in India</title>
+  <link rel="stylesheet" href="/styles/style.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
+  <style>
+    .container {
+      display: flex;
+      margin: 0 auto;
+      padding: 20px;
+      margin-top: 30px;
+    }
 
-.container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
-}
+    .filters {
+      width: 25%;
+      background-color: #e3d9d9;
+      padding: 40px;
+      border-right: 1px solid #ddd;
+      margin-right: 40px;
+    }
 
-header {
-  background-color: #f1f1f1;
-  padding: 10px 0;
-}
+    .content {
+      width: 75%;
+      padding: 20px;
+    }
 
-.logo {
-  float: left;
-  font-size: 2em;
-  font-weight: bold;
-  color: #333;
-}
+    .filter-group {
+      margin-bottom: 20px;
+    }
 
-nav {
-  float: right;
-}
+    .filter-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
 
-nav ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
+    .filter-group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
 
-nav li {
-  display: inline-block;
-  margin-left: 20px;
-}
+    .filter-group button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
 
-nav a {
-  text-decoration: none;
-  color: #333;
-}
+    .college-list {
+      margin-top: 30px;
+      list-style: none;
+      padding: 0;
+    }
 
-main {
-  padding-top: 40px;
-}
+    .college-list li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      background-color: #fff;
+      border: 1px solid #000;
+      border-radius: 4px;
+      overflow: hidden;
+      padding: 10px;
+    }
 
-.hero {
-  background-image: url("images/hero-banner.jpg");  /* Replace with your hero banner image */
-  background-size: cover;
-  background-position: center;
-  padding: 100px 0;
-  color: #fff;
+    .college-list img {
+      width: 100px;
+      height: auto;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+
+    .college-details {
+      flex: 1;
+    }
+
+    .college-details h3 {
+      margin: 0 0 10px 0;
+    }
+
+    .apply-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
   text-align: center;
 }
 
-.hero h1 {
-  font-size: 2em;
-  margin-bottom: 20px;
+.apply-button:hover {
+  background-color: #0056b3;
 }
 
-.hero p {
-  font-size: 1.2em;
-  margin-bottom: 40px;
-}
-
-.hero form {
-  display: flex;
-  align-items: center;
-  width: 50%;
-  margin: 0 auto;
-}
-
-.hero input[type="text"] {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  flex-grow: 1;
-}
-</style>
+  </style>
+</head>
 <body>
- 
-
   <main>
-    <section class="banner">
-      <div class="container">
-        <h1>Management Colleges</h1>
-        <p>Find the perfect Management program for your career goals.</p>
-      </div>
-    </section>
-
-    <section class="college-filters">
-      <div class="container">
+    <section class="container">
+      <div class="filters">
         <h2>Filter Colleges</h2>
-        <form action="#">
+        <form action="#" method="GET">
           <div class="filter-group">
-            <label for="location">Location:</label>
-            <select name="location" id="location">
-              <option value="">All Locations</option>
-              <option value="delhi">Delhi</option>
-              <option value="mumbai">Mumbai</option>
-              <option value="bangalore">Bangalore</option>
-              <option value="others">Other Cities</option>
+            <label for="state">State:</label>
+            <select name="state" id="state" multiple="multiple">
+              <option value="andhra_pradesh">Andhra Pradesh</option>
+              <option value="arunachal_pradesh">Arunachal Pradesh</option>
+              <option value="assam">Assam</option>
+              <option value="bihar">Bihar</option>
+              <option value="chhattisgarh">Chhattisgarh</option>
+              <option value="goa">Goa</option>
+              <option value="gujarat">Gujarat</option>
+              <option value="haryana">Haryana</option>
+              <option value="himachal_pradesh">Himachal Pradesh</option>
+              <option value="jharkhand">Jharkhand</option>
+              <option value="karnataka">Karnataka</option>
+              <option value="kerala">Kerala</option>
+              <option value="madhya_pradesh">Madhya Pradesh</option>
+              <option value="maharashtra">Maharashtra</option>
+              <option value="manipur">Manipur</option>
+              <option value="meghalaya">Meghalaya</option>
+              <option value="mizoram">Mizoram</option>
+              <option value="nagaland">Nagaland</option>
+              <option value="odisha">Odisha</option>
+              <option value="punjab">Punjab</option>
+              <option value="rajasthan">Rajasthan</option>
+              <option value="sikkim">Sikkim</option>
+              <option value="tamil_nadu">Tamil Nadu</option>
+              <option value="telangana">Telangana</option>
+              <option value="tripura">Tripura</option>
+              <option value="uttar_pradesh">Uttar Pradesh</option>
+              <option value="uttarakhand">Uttarakhand</option>
+              <option value="west_bengal">West Bengal</option>
+              <option value="ladakh">Ladakh</option>
+              <option value="puducherry">Puducherry</option>
+              <option value="daman_and_diu">Daman and Diu</option>
+              <option value="dadra_and_nagar_haveli">Dadra and Nagar Haveli</option>
+              <option value="chandigarh">Chandigarh</option>
             </select>
           </div>
+
           <div class="filter-group">
-            <label for="specialization">Specialization:</label>
-            <select name="specialization" id="specialization">
-              <option value="">All Specializations</option>
-              <option value="mba">MBA</option>
-              <option value="pgdm">PGDM</option>
-              <option value="executive-mba">Executive MBA</option>
+            <label for="institute-type">Institute Type:</label>
+            <select name="institute-type" id="institute-type">
+              <option value="">All Types</option>
+              <option value="aided">Aided</option>
+              <option value="un-aided">Un-Aided</option>
+              <option value="govt">Government</option>
             </select>
           </div>
+
           <button type="submit">Filter</button>
         </form>
       </div>
-    </section>
 
-  
-    <section class="college-listings">
-      <h2>Colleges Offering <%= department.deptName %></h2>
-      <ul class="college-list">
-        <% college.courses.forEach(course => { %>
-          <% if (course.deptId.equals(department._id)) { %>
-            <li>
-              <a href="#">
-                <img src="images/<%= college.name %>.jpg" alt="<%= college.name %>">  <h3><%= college.name %></h3>
-                <p>Location: <%= college.location %></p> </a>
-            </li>
-          <% } %>
-        <% }); %>
-      </ul>
-    </section>
+      <div class="content">
+        <section class="banner">
+          <h1><%= department.name %> Colleges in India</h1>
+          <p>Find the perfect <%= department.name %> program for your career goals.</p>
+        </section>
 
+        <section class="college-listings">
+          <h2>Colleges Offering <%= department.name %></h2>
+          <ul class="college-list">
+            <% colleges.forEach(college => { %>
+              <li>
+                <a href="/collegeApplication/<%= college._id %>">
+                  <img src="/images/<%= college.images[0] ? college.images[0].path : 'default_college_image.jpg' %>" alt="<%= college.name %>">
+                  <div class="college-details">
+                    <h3><%= college.name %></h3>
+                    <p>Location: <%= college.district %>, <%= college.state %></p>
+                    <p>Category: <%= college.category %></p>
+                    <p>Type: <%= college.type %></p>
+                  </div>
+                </a>
+                <!-- Add the Apply Now button -->
+          
+                <form action="/admissionApplication/<%= college._id %>" method="get">
+                  <button type="submit" class="apply-button">Apply Now</button>
+                </form>
+                
+              </li>
+            <% }); %>
+          </ul>
+        </section>
+        
+      </div>
+    </section>
   </main>
 
- 
-
-<script src="script.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#state').select2({
+        placeholder: "Select states",
+        allowClear: true
+      });
+    });
+  </script>
 </body>
 </html>
+<%- include('../partials/footer') %>

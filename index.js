@@ -7,7 +7,7 @@ const expressLayouts = require('express-ejs-layouts'); // Updated import
 const bodyParser = require('body-parser');
 require('dotenv').config();
 const session = require('express-session');
-const ejs = require('ejs'); 
+const ejs = require('ejs');
 const PORT = process.env.PORT;
 
 // Middleware to set Cache-Control header

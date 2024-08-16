@@ -4,6 +4,7 @@ const Otp = require("../model/otpModel")
 const College = require('../model/collegeModel');
 const Department = require('../model/departmentModel');
 const Subject = require('../model/subjectModel');
+const admissionApplication = require('../model/admissionApplication');
 const express = require('express');
 const user_route = express.Router();
 const bcrypt = require("bcrypt");
@@ -218,16 +219,22 @@ const loadUniversityServices = async (req, res) => {
 };
 
 
+
+
+
+//for loading the admission page which shows all the departments
   const loadAdmissions = async (req, res) => {
     try {
       const colleges = await College.find({});
       const departments = await Department.find({});
       const subjects = await Subject.find({});
 
+      
       res.render("./user/pages/admissions", {
         colleges,
         departments,
         subjects,
+       
       });
     } catch (error) {
       console.error(error);
@@ -236,33 +243,160 @@ const loadUniversityServices = async (req, res) => {
   };
 
 
+
+
+//for loading colleges of a particular dept
+const loadDeptAdmissions = async (req, res) => {
+  try {
+    const departmentId = req.params.deptId; 
+
+    // Set the deptId in the session
+    req.session.deptId = departmentId;
+
+    // Fetch the department using departmentId
+    const department = await Department.findById(departmentId);
+    if (!department) {
+      return res.status(404).send('Department not found');
+    }
+
+    // Find colleges that have courses in this department
+    const colleges = await College.find({ "courses.deptId": departmentId });
+    
+    res.render("./user/pages/deptAdmissions", {
+      colleges,
+      department, // Pass the whole department object
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+};
+
   
 
 
-  const loadDeptAdmissions = async (req, res) => {
+
+
+
+
+const loadCollegeApplication = async (req, res) => {
+  try {
+    const collegeId = req.params.collegeId;
+    const deptId = req.session.deptId
+  
+    // Fetch the college by its ID
+    const college = await College.findById(collegeId);
+  
+    if (!college) {
+      return res.status(404).send('College not found');
+    }
+  
+    // Filter the courses by the specific department
+    const department = college.courses.find(course => course.deptId.toString() === deptId);
+  
+    if (!department) {
+      return res.status(404).send('Department not found');
+    }
+  
+    // Render the view and pass the filtered department and its courses to the EJS template
+    res.render('./user/pages/collegeApplication', {
+      college,
+      department // Passing the specific department
+    });
+  
+  } catch (error) {
+    console.error('Error loading college application page:', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+  
+    
+
+
+// for loading individual application
+const loadApplicationForm = async (req, res) => {
     try {
-      const { deptId } = req.params;
-  
-      // Find the college with the specified department
-      const college = await College.findOne({ 'courses.deptId': deptId });
-  
-      if (!college) {
-        return res.status(404).send('College not found');
-      }
-  
-      // Extract department details
-      const department = college.courses.find(course => course.deptId.equals(deptId));
-  
-      res.render('./user/pages/deptAdmissions', {
-        college,
-        department,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Server error');
+        const collegeId = req.params.collegeId;
+        const deptId = req.session.deptId
+
+
+        // Fetch the specific college based on collegeId
+        const college = await College.findById(collegeId);
+
+        const department = college.courses.find(course => course.deptId.equals(deptId));
+
+        if (!department) {
+            return res.status(404).send('Department not found');
+        }
+
+        res.render('./user/pages/admissionApplication', {
+            college,
+            department
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
     }
-  };
-  
+};
+
+
+
+const submitApplication = async (req, res) => {
+  try {
+      const { name, email, contact, course } = req.body;
+      const userId = req.session.userId || null; // Allow null for userId if not available
+      const collegeId = req.params.collegeId;
+      const deptId = req.session.deptId;
+
+      // Fetch the college
+      const college = await College.findById(collegeId);
+      if (!college) {
+          return res.status(404).send('College not found');
+      }
+
+      // Fetch the department
+      const department = college.courses.find(course => course.deptId.equals(deptId));
+      if (!department) {
+          return res.status(404).send('Department not found');
+      }
+
+      // Fetch the course (subject)
+      const subject = department.subjects.find(sub => sub._id.equals(course));
+      if (!subject) {
+          return res.status(404).send('Course not found');
+      }
+
+      // Create a new admission application
+      const newApplication = new admissionApplication({
+          userId: userId, // Can be null if no user is logged in
+          name,
+          email,
+          contactNumber: contact,
+          course: subject._id,
+          status: 'admission under process', // Default status
+          collegeId: college._id,
+          deptId: department.deptId,
+      });
+
+      // Save the application
+      await newApplication.save();
+
+      // Destroy the session if the application is submitted properly
+      req.session.destroy((err) => {
+          if (err) {
+              console.error("Failed to destroy session:", err);
+          }
+          res.redirect('/admissions');
+
+      });
+
+  } catch (err) {
+      console.error("Error submitting application:", err);
+      res.status(500).send('Server Error');
+  }
+};
+
 
 
 
@@ -276,4 +410,7 @@ module.exports ={
   verifyOtp,
   loadUniversityServices,
   loadAdmissions,
-  loadDeptAdmissions}
+  loadDeptAdmissions,
+  loadCollegeApplication,
+  loadApplicationForm,
+  submitApplication}

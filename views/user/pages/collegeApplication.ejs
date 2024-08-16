@@ -1,0 +1,284 @@
+<%- include('../partials/header2') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<style>
+  * {
+    box-sizing: border-box;
+    margin : 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.header {
+    background-color: #fff;
+    padding: 20px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.university-info {
+    display: flex;
+    align-items: center;
+}
+
+.university-logo {
+    width: 80px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.university-details h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.university-details p {
+    font-size: 16px;
+    color: #666;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.rating span {
+    margin-right: 5px;
+}
+
+.actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.download-btn {
+    background-color: #d9534f;
+}
+
+.whatsapp-btn {
+    background-color: #25d366;
+}
+
+.navigation {
+    background-color: #84d9f7;
+    padding: 10px 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.navigation ul {
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+}
+
+.navigation ul li {
+    margin-right: 20px;
+}
+
+.navigation ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.info-cards {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.card {
+    background-color: #fff;
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 22%;
+}
+
+.card img {
+    margin-bottom: 10px;
+}
+
+.courses ul {
+    list-style-type: none;
+    margin-top: 10px;
+}
+
+.courses ul li {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.online-application {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.online-application form {
+    display: flex;
+    flex-direction: column;
+}
+
+.online-application label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.online-application input,
+.online-application select {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.online-application button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+</style>
+<body>
+
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <div class="university-info">
+                <img src="university-logo.png" alt="University Logo" class="university-logo">
+                <div class="university-details">
+                    <h1><%= college.name %></h1>
+                    <p><span class="location"><%= college.district %> (<%= college.state %>)</span> Approved by: UGC</p>
+                    <div class="rating">
+                      <span>4.5</span> <!-- Assuming this rating is static or coming from somewhere else -->
+                    </div>
+                  </div>
+                  
+            </div>
+            <div class="actions">
+                <button class="action-btn download-btn">Download Brochure</button>
+                <button class="action-btn whatsapp-btn">WhatsApp</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Section -->
+    <nav class="navigation">
+        <ul>
+            <li><a href="#">Overview</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Courses & Fees</a></li>
+            <li><a href="#">Gallery</a></li>
+            <li><a href="#">Faculty</a></li>
+            <li><a href="#">Recruitment</a></li>
+            <li><a href="#">Questions</a></li>
+            <li><a href="#">Scholarship</a></li>
+            <li><a href="#">FAQs</a></li>
+        </ul>
+    </nav>
+
+    <!-- Info Cards Section -->
+    <section class="info-cards container">
+        <div class="card">
+            <img src="calendar-icon.png" alt="Established Icon">
+            <p>Established in</p>
+            <h3>2013</h3>
+        </div>
+        <div class="card">
+            <img src="package-icon.png" alt="Package Icon">
+            <p>Max Package</p>
+            <h3>24 LPA</h3>
+        </div>
+        <div class="card">
+            <img src="faculty-icon.png" alt="Faculty Icon">
+            <p>Total Faculty</p>
+            <h3>300+</h3>
+        </div>
+        <div class="card">
+            <img src="college-type-icon.png" alt="College Type Icon">
+            <p>College Type</p>
+            <h3>Private</h3>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section class="courses container">
+        <h2>Top Courses</h2>
+        <ul>
+            <li>Engineering and Technology</li>
+            <li>Basic & Applied Sciences</li>
+            <li>Humanities</li>
+            <li>LAW</li>
+            <li>Hospitality And Hotel Management</li>
+        </ul>
+    </section>
+
+    <!-- Online Application Section -->
+    <section class="online-application container">
+        <h2>Online Application</h2>
+        <form action="/apply/submit/<%= college._id %>" method="POST">
+            <label for="name">Full name</label>
+            <input type="text" id="name" placeholder="Enter your name...">
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email...">
+
+            <label for="contact">Contact Number</label>
+            <input type="text" id="contact" placeholder="Enter your contact number...">
+
+            <label for="course">Courses</label>
+         <!-- Display department name -->
+<h2>Courses Offered by <%= department.deptName %> at <%= college.name %></h2>
+
+<!-- Dropdown for selecting a course -->
+<select id="course">
+    <option value="" disabled selected>Select a course</option>
+    <% department.subjects.forEach(subject => { %>
+        <option value="<%= subject._id %>"><%= subject.name %></option>
+    <% }); %>
+</select>
+
+              
+
+            <button type="submit">Apply Now</button>
+        </form>
+    </section>
+
+</body>
+</html>
+<%- include('../partials/footer') %>
