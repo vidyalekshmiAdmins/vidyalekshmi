@@ -1,0 +1,136 @@
+<div class="card-body">
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="all-tab" data-toggle="tab" href="#all" role="tab" aria-controls="all" aria-selected="true">All Applications</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="to-contact-tab" data-toggle="tab" href="#to-contact" role="tab" aria-controls="to-contact" aria-selected="false">To Contact</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="processing-tab" data-toggle="tab" href="#processing" role="tab" aria-controls="processing" aria-selected="false">Processing</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="admitted-tab" data-toggle="tab" href="#admitted" role="tab" aria-controls="admitted" aria-selected="false">Admitted</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="cancelled-tab" data-toggle="tab" href="#cancelled" role="tab" aria-controls="cancelled" aria-selected="false">Cancelled</a>
+    </li>
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    <!-- All Applications Tab -->
+    <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+      <input type="text" id="searchBox" class="form-control mb-3" placeholder="Search by Application ID">
+      <ul class="list-group" id="applicationsList">
+        <% applications.forEach(application => { %>
+          <li class="list-group-item">
+            <i class="fas fa-file-alt text-primary"></i>
+            <span>Admission Application</span>
+            <ul>
+              <li>Status: <%= application.status %></li>
+              <li>College: <%= application.collegeId.name %> (<%= application.collegeId._id %>)</li>
+              <li>Department: <%= application.deptId.name %> (<%= application.deptId._id %>)</li>
+              <li>Date Applied: <%= application.createdAt.toLocaleDateString() %></li>
+            </ul>
+            <a href="/admin/applications/<%= application._id %>" class="btn btn-sm btn-primary">View Details</a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+    
+    <!-- To Contact Tab -->
+    <div class="tab-pane fade" id="to-contact" role="tabpanel" aria-labelledby="to-contact-tab">
+      <ul class="list-group">
+        <% applications.filter(application => application.status === 'not yet contacted').forEach(application => { %>
+          <li class="list-group-item">
+            <i class="fas fa-file-alt text-primary"></i>
+            <span>Admission Application</span>
+            <ul>
+              <li>Status: <%= application.status %></li>
+              <li>College: <%= application.collegeId.name %> (<%= application.collegeId._id %>)</li>
+              <li>Department: <%= application.deptId.name %> (<%= application.deptId._id %>)</li>
+              <li>Date Applied: <%= application.createdAt.toLocaleDateString() %></li>
+            </ul>
+            <a href="/admin/applications/<%= application._id %>" class="btn btn-sm btn-primary">View Details</a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+    
+    <!-- Processing Tab -->
+    <div class="tab-pane fade" id="processing" role="tabpanel" aria-labelledby="processing-tab">
+      <ul class="list-group">
+        <% applications.filter(application => application.status === 'admission under process').forEach(application => { %>
+          <li class="list-group-item">
+            <i class="fas fa-file-alt text-primary"></i>
+            <span>Admission Application</span>
+            <ul>
+              <li>Status: <%= application.status %></li>
+              <li>College: <%= application.collegeId.name %> (<%= application.collegeId._id %>)</li>
+              <li>Department: <%= application.deptId.name %> (<%= application.deptId._id %>)</li>
+              <li>Date Applied: <%= application.createdAt.toLocaleDateString() %></li>
+            </ul>
+            <a href="/admin/applications/<%= application._id %>" class="btn btn-sm btn-primary">View Details</a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+    
+    <!-- Admitted Tab -->
+    <div class="tab-pane fade" id="admitted" role="tabpanel" aria-labelledby="admitted-tab">
+      <ul class="list-group">
+        <% applications.filter(application => application.status === 'took admission').sort((a, b) => b.createdAt - a.createdAt).forEach(application => { %>
+          <li class="list-group-item">
+            <i class="fas fa-file-alt text-primary"></i>
+            <span>Admission Application</span>
+            <ul>
+              <li>Status: <%= application.status %></li>
+              <li>College: <%= application.collegeId.name %> (<%= application.collegeId._id %>)</li>
+              <li>Department: <%= application.deptId.name %> (<%= application.deptId._id %>)</li>
+              <li>Date Applied: <%= application.createdAt.toLocaleDateString() %></li>
+            </ul>
+            <a href="/admin/applications/<%= application._id %>" class="btn btn-sm btn-primary">View Details</a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+    
+    <!-- Cancelled Tab -->
+    <div class="tab-pane fade" id="cancelled" role="tabpanel" aria-labelledby="cancelled-tab">
+      <ul class="list-group">
+        <% applications.filter(application => application.status === 'cancelled').forEach(application => { %>
+          <li class="list-group-item">
+            <i class="fas fa-file-alt text-primary"></i>
+            <span>Admission Application</span>
+            <ul>
+              <li>Status: <%= application.status %></li>
+              <li>College: <%= application.collegeId.name %> (<%= application.collegeId._id %>)</li>
+              <li>Department: <%= application.deptId.name %> (<%= application.deptId._id %>)</li>
+              <li>Date Applied: <%= application.createdAt.toLocaleDateString() %></li>
+            </ul>
+            <a href="/admin/applications/<%= application._id %>" class="btn btn-sm btn-primary">View Details</a>
+          </li>
+        <% }); %>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  document.getElementById('searchBox').addEventListener('input', function() {
+    const searchQuery = this.value.toLowerCase();
+    const applicationsList = document.getElementById('applicationsList');
+    const applications = applicationsList.getElementsByTagName('li');
+
+    for (let i = 0; i < applications.length; i++) {
+      const applicationId = applications[i].querySelector('a').getAttribute('href').split('/').pop();
+      if (applicationId.toLowerCase().includes(searchQuery)) {
+        applications[i].style.display = '';
+      } else {
+        applications[i].style.display = 'none';
+      }
+    }
+  });
+</script>

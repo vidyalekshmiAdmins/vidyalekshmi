@@ -1,10 +1,12 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+
 const admissionApplicationSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
         ref: 'User',
+        required: true,
     },
     name: {
         type: String,
@@ -34,7 +36,7 @@ const admissionApplicationSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['contacted','not yet contacted', 'took admission', 'cancelled', 'admission under process'],
+        enum: ['admission under process', 'not yet contacted', 'took admission', 'cancelled'],
         default: 'not yet contacted',
     },
     collegeId: {
@@ -46,7 +48,13 @@ const admissionApplicationSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Department',
         required: true
+    },
+    agentId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Agent',
+        required: false
     }
 }, { timestamps: true });
+
 
 module.exports = mongoose.model('AdmissionApplication', admissionApplicationSchema);

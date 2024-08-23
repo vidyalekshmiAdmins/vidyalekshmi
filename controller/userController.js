@@ -25,54 +25,41 @@ const twilioClient = new twilio(accountSid,authToken)
 
 //for login
 
-const loadLogin = async(req,res)=>{
+const loadLogin = async (req, res) => {
   try {
-    res.render("./user/pages/userLogin", {userCheck:" "});
+    res.render('./user/pages/userLogin', { error: '' });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
-}
+};
 
 
-
-
-
-
-const verifyLogin = async(req,res)=>{
+const verifyLogin = async (req, res) => {
   try {
-    const identifier = req.body.identifier;
-    const password = req.body.password;
+    const { identifier, password } = req.body;
 
-    if (!identifier || !password) {
-      res.render("./user/pages/userLogin", { userCheck: "Please enter both identifier and password" });
-    } 
-
-    const isEmail = identifier.includes('@')
-    let userData
+    const user = await User.findOne({ $or: [{ email: identifier }, { mobileNumber: identifier }] }).select('+password');
     
-    if(isEmail){
-      userData = await User.findOne({ email: identifier })
-    }else{
-      userData = await User.findOne({ mobileNumber: identifier })
+    if (!user) {
+      return res.render('./user/pages/userLogin', { error: 'Invalid identifier or password' });
     }
 
-    if (userData) {
-      if (password === userData.password) {
-        req.session.user_id = userData._id;
-        console.log(userData._id);
-        res.status(302).redirect("/");
-      } else {
-        res.render("./user/pages/userLogin", { userCheck: "Identifier and Password is incorrect" });
-      }
-    } else {
-      res.render("./user/pages/userLogin", { userCheck: "Identifier and Password is incorrect" });
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.render('./user/pages/userLogin', { error: 'Invalid password' });
     }
+    
+
+    req.session.user = user;
+
+    res.redirect('/');
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
-}
-
-
+};
 
 
 
@@ -83,6 +70,7 @@ const verifyLogin = async(req,res)=>{
 const loadHome = async(req,res)=>{
   try {
     res.render('./user/pages/home')
+    console.log(req.session,"ithil");
   } catch (error) {
     throw new Error(error);
   }
@@ -92,16 +80,21 @@ const loadHome = async(req,res)=>{
 
 
 
-//for user signup
+
+
 
 
 //for user registration
 const loadUserRegistration = async (req, res) => {
   try {
     const User = req.session.user;
-    res.render("user/pages/userRegistration", { userCheck: " " });
+
+    if (User) {
+      res.redirect('/');
+    } else {
+      res.render("user/pages/userRegistration",{ userCheck: " "});
+    }
   } catch (error) {
-    // Log the error or send an error response to the client
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
@@ -111,40 +104,71 @@ const loadUserRegistration = async (req, res) => {
 
 
 
-
-
 const userSignUP = async (req, res) => {
   try {
-    const emailCheck = req.body.email;
-    const checkData = await User.findOne({ email: emailCheck });
+    const { username, email, password, confirmPassword, mobileNumber } = req.body;
+
+    // Validate user input
+    const errors = [];
+    if (!username || username.trim() === '') {
+      errors.push('Username is required');
+    }
+    if (!validator.isEmail(email)) {
+      errors.push('Invalid email format');
+    }
+    if (!password || password.trim() === '') {
+      errors.push('Password is required');
+    } else if (password.length < 6) {
+      errors.push('Password must be at least 6 characters long');
+    }
+    if (password   
+ !== confirmPassword) {
+      errors.push('Password and confirm password do not match');
+    }
+    if (!validator.isMobilePhone(mobileNumber, 'any')) {
+      errors.push('Invalid mobile number format');
+    }
+
+    if (errors.length > 0) {
+      return res.render('./user/pages/userRegistration', { errors });
+    }
+
+
+    // Check for existing user
+    const checkData = await User.findOne({ email });
     if (checkData) {
-  
-      return res.render('./user/pages/userRegistration', { userCheck: "User already exists, please try with a new email" });
-    } else {
-      const userData = {
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password,
-      mobileNumber: req.body.mobileNumber,
-      };
+      return res.render('./user/pages/userRegistration', { userCheck: "User already exists, please try with a new email",errors  });
+    }
 
-      const confirmPassword = req.body.confirmPassword;
+    // Hash the password before saving
+    const salt = await bcrypt.genSalt(10); // Generate salt with a cost factor of 10
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-      if (userData.password !== confirmPassword) {
-        return res.render('./user/pages/userRegistration', { userCheck: " ", passwordMatchError: "Password and confirm password do not match" });
-      }
-      
-  const newUser = new User(userData);
+    const userData = {
+      username,
+      email,
+      password: hashedPassword,
+      mobileNumber,
+    };
+
+    const newUser = new User(userData);
 
     await newUser.save();
     console.log(newUser);
-    req.session.mobileNumber = req.body.mobileNumber
-    res.redirect('/verify')
-    }
+
+    // Success message or redirect to confirmation page
+res.redirect('/');
+    // res.redirect('/verify');
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    let errorMessage = 'Internal Server Error';
+    if (error.name === 'MongoError' && error.code === 11000) { // Duplicate key error
+      errorMessage = 'Email or mobile number already exists.';
+    }
+    res.status(500).send(errorMessage);
   }
-}
+};
+
 
 
 
@@ -342,12 +366,14 @@ const loadApplicationForm = async (req, res) => {
 
 
 
+// FOR SUBMITTING THE APPLICATION FOR TAKING ADMISSION
 const submitApplication = async (req, res) => {
   try {
-      const { name, email, contact, course } = req.body;
-      const userId = req.session.userId || null; // Allow null for userId if not available
-      const collegeId = req.params.collegeId;
-      const deptId = req.session.deptId;
+    const { name, email, contact, course } = req.body;
+    const userId = req.session.user._id;
+    const collegeId = req.params.collegeId;
+    const deptId = req.session.deptId;
+
 
       // Fetch the college
       const college = await College.findById(collegeId);
@@ -369,7 +395,7 @@ const submitApplication = async (req, res) => {
 
       // Create a new admission application
       const newApplication = new admissionApplication({
-          userId: userId, // Can be null if no user is logged in
+          userId: userId,
           name,
           email,
           contactNumber: contact,
@@ -379,23 +405,116 @@ const submitApplication = async (req, res) => {
           deptId: department.deptId,
       });
 
-      // Save the application
-      await newApplication.save();
+   // Save the application and get its ID
+   const savedApplication = await newApplication.save();
+   const applicationId = savedApplication._id;
 
-      // Destroy the session if the application is submitted properly
-      req.session.destroy((err) => {
-          if (err) {
-              console.error("Failed to destroy session:", err);
-          }
-          res.redirect('/admissions');
 
-      });
+   const user = await User.findById(userId);
+   if (!user) {
+     return res.status(404).send('User not found');
+   }
 
+   // Update the user's applications array
+   user.applications.push(applicationId);
+
+   // Save the updated user (important to persist the application ID)
+   await user.save();
+
+   res.redirect('/admissions'); 
   } catch (err) {
       console.error("Error submitting application:", err);
       res.status(500).send('Server Error');
   }
 };
+
+
+
+
+// for loading profile page
+const profilePage = async (req, res) => {
+  try {
+    const user = await User.findById(req.session.user)
+    .populate({
+      path: 'applications',
+      populate: [
+        {
+          path: 'collegeId', // Populate the collegeId
+          model: 'College',
+          select: 'name',
+        },
+        {
+          path: 'deptId', // Populate the deptId to get the department name
+          model: 'Department',
+          select: 'name',
+        },
+       
+      ],
+    });
+
+
+
+    res.render('./user/pages/profilePage', { user, title: 'profilePage' });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+
+
+
+
+
+const loadEditProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.session.user);
+
+
+    res.render('./user/pages/editProfile', {   user ,title: 'editProfilePage' });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+
+
+const editProfile = async (req, res) => {
+  try {
+    const { username, email, mobileNumber } = req.body;
+    let profileImage;
+
+    if (req.file) {
+      profileImage = req.file.filename;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.session.user,
+      { username, email, mobileNumber, profileImage },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).send('User not found');
+    }
+
+    res.redirect('/profile');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
+
+const logout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      return res.status(500).send('Could not log out, please try again.');
+    }
+    res.redirect('/');
+  });
+};
+
 
 
 
@@ -413,4 +532,8 @@ module.exports ={
   loadDeptAdmissions,
   loadCollegeApplication,
   loadApplicationForm,
-  submitApplication}
+  submitApplication,
+  profilePage,
+  loadEditProfile,
+  editProfile,
+  logout}

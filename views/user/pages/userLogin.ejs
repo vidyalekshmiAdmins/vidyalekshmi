@@ -33,6 +33,21 @@
   .google a:hover {
     background-color: #eee;
   }
+
+
+  .btn-primary {
+  background-color: #007bff; /* Customize background color */
+  border-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-color: #0062cc;
+  border-color: #0062cc;
+}
   
   
   
@@ -59,11 +74,11 @@
                   <div class="row form-group mb-4">
                     <div class="col">
 
-                      <% if (userCheck && userCheck.trim() !== "") { %>
+                      <% if (error && error.trim() !== '') { %>
                         <div class="alert alert-danger" role="alert" style="background-color: #207981; color: #006D77;">
-                            <%= userCheck %>
+                          <%= error %>
                         </div>
-                    <% } %>
+                      <% } %>
 
                      
                     </div>
@@ -92,11 +107,7 @@
                       </button>
                     </div>
 
-                    <!-- <div class="mb-3 social-btn-contain">
-                      <div class="social-btn">
-                        <button class="btn btn-outline-primary" id="google-sign-up"><img src="/user/img/googleIcon.png" alt=""> Sign Up with Google</button>
-                      </div>
-                    </div>  -->
+                    <a href="/signup" class="btn btn-primary">Don't have an account? Sign up</a>
 
                     <div class="google">
                         <a class="btn btn-outline-dark" id="google-sign-up" href="" role="button" style="text-transform:none" >

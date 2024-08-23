@@ -4,7 +4,9 @@ const Department = require('../model/departmentModel');
 const Subject = require('../model/subjectModel');
 const multer = require('multer');
 const ApplyCertificate = require("../model/applyCertificate");
+const AdmissionApplication = require("../model/admissionApplication");
 const bcrypt = require('bcrypt');
+const upload= require("../routes/adminRoute");
 
 const admin={
   ADMIN_PASSWORD:  "admin123",
@@ -12,7 +14,7 @@ ADMIN_EMAIL: "admin123@gmail.com"
 };
 
 
-const upload = multer({ dest: 'public/admin/uploads' });
+//  const upload = multer({ dest: 'public/admin/uploads' });
 
 
 const loadLogin = async (req, res) => {
@@ -502,6 +504,7 @@ const loadAddDepartment = async (req, res) => {
 const addDepartment = async (req, res) => {
   try {
     const { name } = req.body;
+    console.log(req.body)
 
     if (!name) {
       return res.status(400).json({ message: 'Department name is required' });
@@ -509,16 +512,18 @@ const addDepartment = async (req, res) => {
 
     // Access uploaded image information (if using Multer)
     let image = '';
-    if (req.file) {
-      image = req.file.path; // Assuming the path is stored in req.file.path
+    if (req.body.image) {
+      image = req.body.image;
+
+      console.log( req.body.image,"nokk ");
     } else {
-      // Handle case where no image is uploaded (optional: set a default image path)
+      console.log("ELSE IN")
     }
 
-    // Validate image path (optional)
-    if (image && !isValidImagePath(image)) { // Call your validation function
-      return res.status(400).json({ message: 'Invalid image path' });
-    }
+    // // Validate image path (optional)
+    // if (image && !isValidImagePath(image)) { // Call your validation function
+    //   return res.status(400).json({ message: 'Invalid image path' });
+    // }
 
     const newDepartment = new Department({ name, image });
     await newDepartment.save();
@@ -602,6 +607,29 @@ const addSubject = async (req, res) => {
 
 
 
+
+const loadAdmissionController = async (req, res) => {
+  try {
+    const applications = await AdmissionApplication.find()
+    .populate({
+      path: 'collegeId',
+      select: 'name',
+    })
+    .populate({
+      path: 'deptId',
+      select: 'name',
+    });
+
+
+    res.render('admin/pages/admissionController', { applications , title:'Admission COntroller' });
+  } catch (err) {
+    console.error("Error fetching applications:", err);
+    res.status(500).send('Server Error');
+  }
+};
+
+
+
 module.exports = {
   loadLogin,
   loadDashboard,
@@ -626,5 +654,6 @@ module.exports = {
   loadAddDepartment,
   loadDepartmentSubjects,
   loadAddSubject,
-  addSubject
+  addSubject,
+  loadAdmissionController
 };

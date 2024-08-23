@@ -1,20 +1,5 @@
-const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
-const crypto = require('crypto');
-
-const imageSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  path: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-});
-
+const { Schema } = mongoose;
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -24,6 +9,7 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
     type: String,
@@ -32,22 +18,19 @@ const userSchema = new mongoose.Schema({
   },
   mobileNumber: {
     type: String,
-    
   },
-  image: {
-    type:  [imageSchema], 
+  profileImage: {
+    type: String,
   },
- 
+  applications: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'AdmissionApplication',
+    }
+  ]
 }, { timestamps: true });
 
-userSchema.methods.authenticate = function (password) {
-  try {
-    return bcrypt.compareSync(password, this.password);
-  } catch (error) {
-    console.error('Error comparing passwords:', error);
-    return false;
-  }
-};
 
-// Export the model
+
+
 module.exports = mongoose.model('User', userSchema);

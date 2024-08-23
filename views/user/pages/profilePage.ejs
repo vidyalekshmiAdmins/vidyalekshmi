@@ -1,3 +1,5 @@
+<%- include('../partials/header2') %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,10 +13,10 @@
 <style>
   body {
     background-color: #f8f9fa;
-    padding-top: 40px;
 }
 
 .profile-card {
+    height: auto;
     border: none;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
@@ -24,7 +26,7 @@
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
-    margin-top: -75px;
+    margin-top: 5px;
     margin-bottom: 15px;
 }
 
@@ -36,9 +38,15 @@
     padding: 0;
 }
 
+.card-body {
+    background-color: grey;
+}
+
 .list-group-item {
     border: none;
     padding: 10px 15px;
+    background-color: white;
+    margin-bottom: 10px;
 }
 
 .list-group-item i {
@@ -49,17 +57,55 @@
     margin-bottom: 0;
 }
 
-.post {
-    margin-bottom: 15px;
+.logout-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #dc3545;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
 }
 
-.post-title {
-    margin-bottom: 5px;
+.logout-btn:hover {
+    background-color: #c82333;
 }
 
-.post-content {
-    margin-bottom: 10px;
+.status-highlight {
+  font-weight: bold;
+  padding: 2px 5px;
+  border-radius: 4px;
 }
+
+/* Specific styling based on status */
+.status-highlight.contacted {
+  color: #fff;
+  background-color: #28a745; /* Green for "contacted" */
+}
+
+.status-highlight.not-yet-contacted {
+  color: #fff;
+  background-color: #ffc107; /* Yellow for "not yet contacted" */
+}
+
+.status-highlight.took-admission {
+  color: #fff;
+  background-color: #007bff; /* Blue for "took admission" */
+}
+
+.status-highlight.cancelled {
+  color: #fff;
+  background-color: #dc3545; /* Red for "cancelled" */
+}
+
+.status-highlight.admission-under-process {
+  color: #fff;
+  background-color: #17a2b8; /* Teal for "admission under process" */
+}
+
 
 </style>
 <body>
@@ -68,31 +114,28 @@
             <div class="col-md-4">
                 <div class="card profile-card">
                     <div class="card-header text-center">
-                        <img src="profile-picture.jpg" alt="Profile Picture" class="profile-img">
-                        <h3>John Doe</h3>
-                        <p class="text-muted">@johndoe</p>
+                        <img src="<%= user && user.profileImage ? user.profileImage : '/images/default-user.png' %>" alt="Profile Picture" class="profile-img">
+                        <h3><%= user.username ? user.username : 'Not added yet' %></h3>
                     </div>
                     <div class="card-body">
                         <ul class="list-group">
                             <li class="list-group-item">
-                                <i class="fas fa-envelope"></i> Email: john.doe@example.com
+                                <i class="fas fa-envelope"></i> Email: <%= user.email ? user.email : 'Not added yet' %>
                             </li>
                             <li class="list-group-item">
-                                <i class="fas fa-phone"></i> Phone: +123 456 7890
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fas fa-map-marker-alt"></i> Location: New York, USA
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fas fa-briefcase"></i> Occupation: Software Developer
+                                <i class="fas fa-phone"></i> Phone: <%= user.mobileNumber ? user.mobileNumber : 'Not added yet' %>
                             </li>
                         </ul>
                     </div>
                     <div class="card-footer text-center">
-                        <button class="btn btn-primary">Edit Profile</button>
+                        <a href="/editProfile" class="btn btn-primary">Edit Profile</a>
+                        <form action="/logout" method="POST" class="d-inline">
+                            <button type="submit" class="logout-btn">Logout</button>
+                        </form>
                     </div>
                 </div>
             </div>
+
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
@@ -100,22 +143,34 @@
                     </div>
                     <div class="card-body">
                         <ul class="list-group">
-                            <li class="list-group-item">
-                                <i class="fas fa-check-circle text-success"></i> Completed task "Build a Profile Page"
-                                <span class="text-muted float-right">2 hours ago</span>
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fas fa-upload text-info"></i> Uploaded new project files
-                                <span class="text-muted float-right">1 day ago</span>
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fas fa-comment text-warning"></i> Commented on a post
-                                <span class="text-muted float-right">3 days ago</span>
-                            </li>
-                            <li class="list-group-item">
-                                <i class="fas fa-user-plus text-primary"></i> Followed @janedoe
-                                <span class="text-muted float-right">5 days ago</span>
-                            </li>
+                            <% if (user.applications.length > 0) { %>
+                                <% user.applications.forEach(application => { %>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-file-alt text-primary"></i>
+                                        <span>Admission Application</span>
+                                        <ul>
+                                            <li>Application id: <%= application._id %></li>
+                                            <li>
+                                                Status: 
+                                                <span class="status-highlight <%= application.status.replace(/\s+/g, '-').toLowerCase() %>">
+                                                  <%= application.status %>
+                                                </span>
+                                            </li>
+                                            <br>
+                                            <li>Applicant: <%= application.name %></li>
+                                            <li>Email: <%= application.email %></li>
+                                            <li>Mobile: <%= application.contactNumber %></li>
+                                            <li>College: <%= application.collegeId ? application.collegeId.name : 'College name not available' %></li>
+                                            <li>Department: <%= application.deptId ? application.deptId.name : 'Department name not available' %></li>
+                                            <!-- <li>Course: <%= application.course ? application.course.name : 'Course name not available' %></li> -->
+                                            <li>Date Applied: <%= application.createdAt.toLocaleDateString() %></li>
+                                            <li>Time Applied: <%= application.createdAt.toLocaleTimeString() %></li>
+                                        </ul>
+                                    </li>
+                                <% }); %>
+                            <% } else { %>
+                                <li class="list-group-item">No activities yet</li>
+                            <% } %>
                         </ul>
                     </div>
                 </div>
@@ -145,3 +200,5 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
+<%- include('../partials/footer') %>

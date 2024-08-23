@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const adminRoute = express.Router();
-const expressLayouts = require('express-ejs-layouts'); 
+const expressLayouts = require('express-ejs-layouts');
 const multer = require('multer');
 const adminController = require('../controller/adminController');
 // const categoryController = require('../controller/categoryController');
@@ -13,17 +13,21 @@ require('dotenv').config()
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    
-    cb(null, path.join(__dirname, '../public/admin/uploads'));},
-
-
+    const uploadDir = path.join(__dirname, '../public/admin/uploads');
+    // Check if directory exists, create it if necessary
+    fs.promises.access(uploadDir, fs.constants.F_OK)
+      .then(() => cb(null, uploadDir))
+      .catch(() => fs.promises.mkdir(uploadDir, { recursive: true })
+        .then(() => cb(null, uploadDir)));
+  },
   filename: function (req, file, cb) {
     cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   }
 });
 
-const upload = multer({ storage: storage });
-
+const upload = multer({
+ storage: storage
+ });
 
 
 
@@ -127,13 +131,17 @@ adminRoute.get('/department', adminAuth.isLogin, adminController.viewDepartments
 
 adminRoute.get('/department/add', adminAuth.isLogin, adminController.loadAddDepartment);
 
-adminRoute.post('/department/add', adminAuth.isLogin, adminController.addDepartment);
+adminRoute.post('/department/add', upload.fields('image'), adminAuth.isLogin, adminController.addDepartment);
 
 adminRoute.get('/department/:id/subjects', adminAuth.isLogin, adminController.loadDepartmentSubjects);
 
 adminRoute.get('/department/:id/subjects/add', adminAuth.isLogin, adminController.loadAddSubject);
 
 adminRoute.post('/department/:id/subjects/add', adminAuth.isLogin, adminController.addSubject);
+
+
+// for admission controller
+adminRoute.get('/applications', adminAuth.isLogin, adminController.loadAdmissionController);
 
 
 module.exports = adminRoute;

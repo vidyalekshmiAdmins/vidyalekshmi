@@ -22,12 +22,14 @@ const storage = multer.diskStorage({
 
 
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    const name=Date.now()+ '-'+file.originalname;
+    cb(null,name)
+    // cb(null, file.fieldname  + Date.now() + path.extname(file.originalname));
   }
 });
 
 const upload = multer({ storage: storage });
-
+module.exports = {upload};
 
 
 
@@ -56,31 +58,51 @@ user_route.get('/', userController.loadHome);
 user_route.get('/verify', userAuth.isLogin, userController.sendOtp);
 user_route.post('/verify', userAuth.isLogin, userController.verifyOtp);
 
+
 // Routes accessible to both logged in and logged out users
 user_route.get('/login', userAuth.isLogout, userController.loadLogin);
 user_route.post('/login', userAuth.isLogout, userController.verifyLogin);
+user_route.post('/logout', userAuth.isLogout, userController.logout);
+
+
+
+//for loading the profile page
+user_route.get('/profile', userAuth.isLogin, userController.profilePage);
+user_route.get('/editProfile', userAuth.isLogin, userController.loadEditProfile);
+user_route.post('/profile/update', userAuth.isLogin, userController.editProfile);
 
 
 
 
-
-
-user_route.get('/universityServices', userController.loadUniversityServices);
-user_route.get('/applyForCertificate', servicesController.loadApplyForCertificate);
-user_route.post('/applyForCertificate', servicesController.applyForCertificate);
+user_route.get('/universityServices', userAuth.isLogin, userController.loadUniversityServices);
+user_route.get('/applyForCertificate', userAuth.isLogin, servicesController.loadApplyForCertificate);
+user_route.post('/applyForCertificate', userAuth.isLogin, servicesController.applyForCertificate);
 
 
 
 
 // Route for loading the admissions page
-user_route.get('/admissions', userController.loadAdmissions);
-user_route.get('/departments/:deptId', userController.loadDeptAdmissions);
+user_route.get('/admissions', userAuth.isLogin, userController.loadAdmissions);
+user_route.get('/departments/:deptId', userAuth.isLogin, userController.loadDeptAdmissions);
 
-user_route.get('/collegeApplication/:collegeId', userController.loadCollegeApplication);
+user_route.get('/collegeApplication/:collegeId', userAuth.isLogin, userController.loadCollegeApplication);
 
-user_route.get('/admissionApplication/:collegeId', userController.loadApplicationForm);
+user_route.get('/admissionApplication/:collegeId', userAuth.isLogin, userController.loadApplicationForm);
 
 // Route for handling form submission
 
-user_route.post('/apply/submit/:collegeId', userController.submitApplication);
+user_route.post('/apply/submit/:collegeId', userAuth.isLogin, userController.submitApplication);
+
+
+
+
+
+
+
 module.exports = user_route;
+
+
+
+
+
+

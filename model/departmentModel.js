@@ -9,6 +9,7 @@ const departmentSchema = new Schema({
   },
   image: {
     type: String,
+    required: false,
     trim: true,
   },
 });

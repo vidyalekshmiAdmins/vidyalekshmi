@@ -401,6 +401,7 @@ const addSelectedSubjects = async (req, res) => {
 
 
 
+
 module.exports = {
   loadLogin,
   logout ,
@@ -413,5 +414,5 @@ module.exports = {
   getSubjectsByDept,
   searchSubjects,
   getAllSubjects,
-  addSelectedSubjects
+  addSelectedSubjects,
 };
