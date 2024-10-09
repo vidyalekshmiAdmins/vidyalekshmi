@@ -1,0 +1,113 @@
+<div class="card">
+  <div class="card-header">
+    <h4>Application Details</h4>
+  </div>
+  <div class="card-body">
+    <ul class="list-group">
+      <li class="list-group-item">
+        <i class="fas fa-file-alt text-primary"></i>
+        <span>Admission Application</span>
+        <ul>
+          <p>CURRENT STATUS: <%= application.status  %></p>
+          <li>Change Status:
+            <form id="statusForm" action="/admin/applications/<%= application._id %>/update" method="POST">
+
+              <select id="applicationStatus" class="form-control form-control-sm" name="status">
+                <option value="admission under process" <%= application.status === 'admission under process' ? 'selected' : '' %>>Admission under process</option>
+                <option value="not yet contacted" <%= application.status === 'not yet contacted' ? 'selected' : '' %>>Not Yet Contacted</option>
+                <option value="took admission"
+                  <%= application.status === 'took admission'  ? 'selected' : '' %>>
+                  Took Admission
+                </option>
+                <option value="cancelled" <%= application.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+              </select>
+              <div class="mt-2">
+
+              </div>
+       
+          </li>
+          <li>Applicant Name: <%= application.name %></li>
+          <li>College: <%= application.collegeId ? application.collegeId.name : 'N/A' %></li>
+          <li>Department: <%= application.deptId ? application.deptId.name : 'N/A' %></li>
+          <li>Course: <%= application.course ? application.course.name : 'N/A' %></li>
+          <li>Date Applied: <%= new Date(application.createdAt).toLocaleDateString() %></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Admission Details Form -->
+    <div id="admissionDetails" class="mt-3">
+     
+        <div class="form-group">
+          <label for="admissionId">Admission ID</label>
+          <input type="text" class="form-control" id="admissionId" name="admissionId" required>
+          <div id="admissionIdError" class="text-danger"></div>
+        </div>
+        <div class="form-group">
+          <label for="admissionDate">Admission Date</label>
+          <input type="date" class="form-control" id="admissionDate" name="admissionDate" required>
+          <div id="admissionDateError" class="text-danger"></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Register Admission</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const applicationStatus = document.getElementById('applicationStatus');
+  const admissionId = document.getElementById('admissionId');
+  const admissionDate = document.getElementById('admissionDate');
+  const admissionForm = document.getElementById('admissionForm');
+  const admissionIdError = document.getElementById('admissionIdError');
+  const admissionDateError = document.getElementById('admissionDateError');
+
+  // Reset error messages
+  const resetErrors = () => {
+    admissionIdError.textContent = '';
+    admissionDateError.textContent = '';
+  };
+
+  // Add or remove required fields based on the selected status
+  applicationStatus.addEventListener('change', (event) => {
+    const selectedStatus = event.target.value;
+
+    if (selectedStatus === 'took admission') {
+      admissionId.required = true;
+      admissionDate.required = true;
+    } else {
+      admissionId.required = false;
+      admissionDate.required = false;
+    }
+  });
+
+  // Validate admission ID and admission date when the form is submitted
+  admissionForm.addEventListener('submit', (event) => {
+    resetErrors();
+    
+    const selectedStatus = applicationStatus.value;
+    let valid = true;
+
+    if (selectedStatus === 'took admission') {
+      // Admission ID validation: must be exactly 12 digits
+      const admissionIdValue = admissionId.value.trim();
+      const idRegex = /^\d{12}$/;
+
+      if (!idRegex.test(admissionIdValue)) {
+        admissionIdError.textContent = 'Admission ID must be exactly 12 digits.';
+        valid = false;
+      }
+
+      // Admission date validation: must not be empty
+      const admissionDateValue = admissionDate.value.trim();
+      if (admissionDateValue === '') {
+        admissionDateError.textContent = 'Admission Date is required.';
+        valid = false;
+      }
+    }
+
+    if (!valid) {
+      event.preventDefault(); // Prevent form submission if validation fails
+    }
+  });
+</script>

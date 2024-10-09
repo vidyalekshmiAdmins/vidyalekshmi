@@ -67,6 +67,10 @@ collegeRoute.post('/:deptId/subjects/search', collegeAuth.isLogin, collegeContro
 collegeRoute.post('/subjects/add', collegeAuth.isLogin, collegeController.addSelectedSubjects);
 
 
+collegeRoute.get('/admissions', collegeAuth.isLogin, collegeController.loadAdmissionsPage);
+collegeRoute.get('/admission-requests', collegeAuth.isLogin, collegeController.loadAdmissionRequestsPage);
+collegeRoute.get('/admission-request/:action/:applicationId', collegeAuth.isLogin, collegeController.updateAdmissionStatus);
+
 
 
 module.exports = collegeRoute;

@@ -12,6 +12,7 @@ const otpGenerator = require('otp-generator')
 const twilio = require('twilio')
 const accountSid = process.env.ACCOUNT_SID
 const authToken = process.env.AUTH_TOKEN
+const validator = require('validator');
 const twilioClient = new twilio(accountSid,authToken)
 
 
@@ -70,7 +71,6 @@ const verifyLogin = async (req, res) => {
 const loadHome = async(req,res)=>{
   try {
     res.render('./user/pages/home')
-    console.log(req.session,"ithil");
   } catch (error) {
     throw new Error(error);
   }
@@ -88,18 +88,17 @@ const loadHome = async(req,res)=>{
 const loadUserRegistration = async (req, res) => {
   try {
     const User = req.session.user;
-
+    const errors = [];
     if (User) {
       res.redirect('/');
     } else {
-      res.render("user/pages/userRegistration",{ userCheck: " "});
+      res.render("user/pages/userRegistration",{ userCheck: " ", errors});
     }
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
 };
-
 
 
 
@@ -152,9 +151,8 @@ const userSignUP = async (req, res) => {
     };
 
     const newUser = new User(userData);
-
+console.log(newUser);
     await newUser.save();
-    console.log(newUser);
 
     // Success message or redirect to confirmation page
 res.redirect('/');
@@ -245,26 +243,133 @@ const loadUniversityServices = async (req, res) => {
 
 
 
+const loadAdmissions = async (req, res) => {
+  try {
+    // Fetch the necessary data for the filters and page
+    const colleges = await College.find({});
+    const departments = await Department.find({});
+    const subjects = await Subject.find({});
+    const states = await College.distinct('state'); // Get the distinct list of states
+ const types = await College.distinct('type'); // Get the distinct list of types
+    const categories = await College.distinct('category'); // Get the distinct list of categories
+    const graduationTypes = await Subject.distinct('GraduationType'); // Get distinct graduation types
 
-//for loading the admission page which shows all the departments
-  const loadAdmissions = async (req, res) => {
-    try {
-      const colleges = await College.find({});
-      const departments = await Department.find({});
-      const subjects = await Subject.find({});
+    // Initialize empty selectedFilters object to avoid ReferenceError
+    const selectedFilters = {
+      group: 'all',
+      state: 'all',
+      type: 'all',
+      category: 'all',
+      graduationType: 'all'
+    };
 
-      
-      res.render("./user/pages/admissions", {
-        colleges,
-        departments,
-        subjects,
-       
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Server error');
+    // Render the template with the data
+    res.render("./user/pages/admissions", {
+      colleges,
+      departments,
+      subjects,
+      states,  // Pass the states to the template
+      types,   // Pass the types to the template
+      categories, // Pass the categories to the template
+      graduationTypes,  // Pass graduation types to the template
+      courses: [],  // Initially, no courses are displayed
+      selectedFilters, // Pass an empty filter object to avoid errors
+    });
+  } catch (error) {
+    console.error('Error loading admissions page:', error);
+    res.status(500).send('Server error');
+  }
+};
+
+
+
+
+const filterAdmissions = async (req, res) => {
+  try {
+    // Destructure filter options from request body
+    const { group, state, type, category, graduationType } = req.body;
+
+    // Build filter criteria based on selected options
+    let filterCriteria = {};
+    if (state && state !== 'all') {
+      filterCriteria['state'] = state;
     }
-  };
+    if (type && type !== 'all') {
+      filterCriteria['type'] = type;
+    }
+    if (category && category !== 'all') {
+      filterCriteria['category'] = category;
+    }
+
+    // Find all colleges that match the filter criteria
+    let colleges = await College.find(filterCriteria)
+      .populate({
+        path: 'courses.deptId',
+        match: group && group !== 'all' ? { _id: new mongoose.Types.ObjectId(group) } : {},
+        select: 'name' // Only select the department name
+      })
+      .populate({
+        path: 'courses.subjects.subjectId',
+        match: graduationType && graduationType !== 'all' ? { GraduationType: graduationType } : {},
+        select: 'name GraduationType' // Only select subject name and graduation type
+      });
+
+    // Log the filtered colleges after population
+    console.log('Filtered colleges after population:', colleges);
+
+    // Step 3: Filter the subjects based on selectedGroup and selectedGraduationType
+    const filteredSubjects = [];
+
+    // Loop through each college
+    colleges.forEach(college => {
+      // Loop through each course in the college
+      college.courses.forEach(course => {
+        // Check if the course's department matches the selected group
+        const isGroupMatch = group === 'all' || new mongoose.Types.ObjectId(group).equals(course.deptId);
+
+        if (isGroupMatch) {
+          // Loop through each subject in the course
+          course.subjects.forEach(subject => {
+            // Access the populated subject's name and graduation type
+            const subjectName = subject.subjectId.name; // Use subjectId.name
+            const subjectGraduationType = subject.GraduationType;
+
+            // Check if the subject's graduation type matches the selected graduation type
+            const isGraduationTypeMatch = graduationType === 'all' || subjectGraduationType === graduationType;
+
+            // If both conditions match, add to the filtered subjects
+            if (isGraduationTypeMatch) {
+              filteredSubjects.push({
+                collegeName: college.name,
+                departmentName: course.deptName,
+                subjectName: subjectName,
+                graduationType: subjectGraduationType,
+              });
+            }
+          });
+        }
+      });
+    });
+
+    // Log filtered results for debugging
+    console.log('Final filtered subjects:', filteredSubjects);
+
+    // Step 4: Render the template with the filtered data
+    res.render('./user/pages/admissions', {
+      colleges,
+      departments: await College.distinct('courses.deptName'),
+      subjects: filteredSubjects.length ? filteredSubjects : [],  // Pass the filtered subjects or an empty array if no subjects
+      states: await College.distinct('state'),
+      types: await College.distinct('type'),
+      categories: await College.distinct('category'),
+      graduationTypes: await College.distinct('courses.subjects.GraduationType'),
+      selectedFilters: { group, state, type, category, graduationType }, // Pass the selected filters
+    });
+  } catch (error) {
+    console.error('Error in filterAdmissions:', error);
+    res.status(500).render('error', { error: 'Something went wrong' });
+  }
+};
 
 
 
@@ -272,7 +377,7 @@ const loadUniversityServices = async (req, res) => {
 //for loading colleges of a particular dept
 const loadDeptAdmissions = async (req, res) => {
   try {
-    const departmentId = req.params.deptId; 
+    const departmentId = req.params.deptId;
 
     // Set the deptId in the session
     req.session.deptId = departmentId;
@@ -293,8 +398,8 @@ const loadDeptAdmissions = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
-  }
-};
+  };
+}
 
   
 
@@ -374,60 +479,65 @@ const submitApplication = async (req, res) => {
     const collegeId = req.params.collegeId;
     const deptId = req.session.deptId;
 
+    // Fetch the college
+    const college = await College.findById(collegeId);
+    if (!college) {
+      return res.status(404).send('College not found');
+    }
 
-      // Fetch the college
-      const college = await College.findById(collegeId);
-      if (!college) {
-          return res.status(404).send('College not found');
+    // Fetch the department
+    const department = college.courses.find(course => course.deptId.equals(deptId));
+    if (!department) {
+      return res.status(404).send('Department not found');
+    }
+
+    // Fetch the course (subject)
+    const subject = department.subjects.find(sub => sub._id.equals(course));
+    if (!subject) {
+      return res.status(404).send('Course not found');
+    }
+
+    // Create a new admission application
+    const newApplication = new admissionApplication({
+      userId: userId,
+      name,
+      email,
+      contactNumber: contact,
+      course: subject._id,
+      status: 'not yet contacted', // Default status
+      collegeId: college._id,
+      deptId: department.deptId,
+      // New fields (staff fields) will be added later when required (such as on admission confirmation)
+      staff: {
+        admission_id: '', // Placeholder, to be filled during admission
+        id: '',           // Placeholder, to be filled during admission
+        date: null        // Placeholder, to be filled during admission
       }
+    });
 
-      // Fetch the department
-      const department = college.courses.find(course => course.deptId.equals(deptId));
-      if (!department) {
-          return res.status(404).send('Department not found');
-      }
+    // Save the application and get its ID
+    const savedApplication = await newApplication.save();
+    const applicationId = savedApplication._id;
 
-      // Fetch the course (subject)
-      const subject = department.subjects.find(sub => sub._id.equals(course));
-      if (!subject) {
-          return res.status(404).send('Course not found');
-      }
+    // Fetch the user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
 
-      // Create a new admission application
-      const newApplication = new admissionApplication({
-          userId: userId,
-          name,
-          email,
-          contactNumber: contact,
-          course: subject._id,
-          status: 'admission under process', // Default status
-          collegeId: college._id,
-          deptId: department.deptId,
-      });
+    // Update the user's applications array
+    user.applications.push(applicationId);
 
-   // Save the application and get its ID
-   const savedApplication = await newApplication.save();
-   const applicationId = savedApplication._id;
+    // Save the updated user (important to persist the application ID)
+    await user.save();
 
-
-   const user = await User.findById(userId);
-   if (!user) {
-     return res.status(404).send('User not found');
-   }
-
-   // Update the user's applications array
-   user.applications.push(applicationId);
-
-   // Save the updated user (important to persist the application ID)
-   await user.save();
-
-   res.redirect('/admissions'); 
+    // Redirect the user to the admissions page
+    res.redirect('/admissions');
   } catch (err) {
-      console.error("Error submitting application:", err);
-      res.status(500).send('Server Error');
+    console.error("Error submitting application:", err);
+    res.status(500).send('Server Error');
   }
 };
-
 
 
 
@@ -529,6 +639,7 @@ module.exports ={
   verifyOtp,
   loadUniversityServices,
   loadAdmissions,
+  filterAdmissions,
   loadDeptAdmissions,
   loadCollegeApplication,
   loadApplicationForm,

@@ -2,9 +2,13 @@ const College = require('../model/collegeModel');
 const User = require('../model/userModel');
 const Department = require('../model/departmentModel');
 const Subject = require('../model/subjectModel');
+const Staff = require('../model/staffModel');
 const multer = require('multer');
 const ApplyCertificate = require("../model/applyCertificate");
 const AdmissionApplication = require("../model/admissionApplication");
+const JobSection = require('../model/JobSection');
+
+
 const bcrypt = require('bcrypt');
 const upload= require("../routes/adminRoute");
 
@@ -50,6 +54,8 @@ const login = async (req, res) => {
     throw new Error(error);
   }
 };
+
+
 
 const loadDashboard = async (req, res) => {
   try {
@@ -504,27 +510,14 @@ const loadAddDepartment = async (req, res) => {
 const addDepartment = async (req, res) => {
   try {
     const { name } = req.body;
-    console.log(req.body)
 
     if (!name) {
       return res.status(400).json({ message: 'Department name is required' });
     }
 
-    // Access uploaded image information (if using Multer)
-    let image = '';
-    if (req.body.image) {
-      image = req.body.image;
+    let image = req.files['image'] ? req.files['image'][0].filename : null;
 
-      console.log( req.body.image,"nokk ");
-    } else {
-      console.log("ELSE IN")
-    }
-
-    // // Validate image path (optional)
-    // if (image && !isValidImagePath(image)) { // Call your validation function
-    //   return res.status(400).json({ message: 'Invalid image path' });
-    // }
-
+  
     const newDepartment = new Department({ name, image });
     await newDepartment.save();
 
@@ -583,7 +576,7 @@ const loadAddSubject = async (req, res) => {
 
 const addSubject = async (req, res) => {
   try {
-    const { name, numberOfSemesters, feesPerSemester } = req.body;
+    const { name, graduationType } = req.body;
     const department = await Department.findById(req.params.id);
 
     if (!department) {
@@ -593,7 +586,7 @@ const addSubject = async (req, res) => {
     const newSubject = new Subject({
       name,
       department: { _id: department._id, name: department.name },
-      
+      GraduationType: graduationType,
     });
 
     await newSubject.save();
@@ -608,8 +601,16 @@ const addSubject = async (req, res) => {
 
 
 
+
 const loadAdmissionController = async (req, res) => {
   try {
+
+
+    if (!req.session.staffId) {
+      return res.redirect('/admin/staff/verification'); // Redirect to verification if not logged in
+    }
+
+    
     const applications = await AdmissionApplication.find()
     .populate({
       path: 'collegeId',
@@ -627,6 +628,321 @@ const loadAdmissionController = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
+
+
+const loadApplicationDetails = async (req, res) => {
+  try {
+    const applicationId = req.params.id;
+
+    const application = await AdmissionApplication.findById(applicationId)
+      .populate('course', 'name') // Select only name from course
+      .populate('collegeId', 'name') // Select only name from collegeId
+      .populate('deptId', 'name')
+      .populate('userId', 'name'); // Populate userId if needed
+
+    if (!application) {
+      return res.status(404).send('Application not found');
+    }
+
+    res.render('admin/pages/applicationDetails', { title: 'Application Details', application });
+  } catch (err) {
+    console.error("Error fetching application details:", err);
+    res.status(500).send('Server Error');
+  }
+};
+
+
+
+// FOR UPDATING APPLICATION STATUS OR REGISTERING ADMISSION
+const updateApplicationDetails = async (req, res) => {
+  try {
+    const { status, admissionId, admissionDate } = req.body;
+    const applicationId = req.params.id;
+    const staffId = req.session.staffId; // Assuming staffId is stored in session
+
+    // Find the application
+    const application = await AdmissionApplication.findById(applicationId);
+    if (!application) {
+      return res.status(404).send('Application not found');
+    }
+
+    // Update application status
+    application.status = status;
+
+    // If the status is 'took admission', update the admission details
+    if (status === 'took admission') {
+      application.status = 'college approval pending'; // Updating to pending approval as per your logic
+      application.staff = {
+        admission_id: admissionId,
+        date: admissionDate,
+        id: staffId, // Set staff ID from session
+      };
+
+      // Find the staff and update the application field in staff document
+      const staff = await Staff.findOne({ id: staffId });
+      if (!staff) {
+        return res.status(404).send('Staff not found');
+      }
+
+      // Update the application details in the staff document
+      staff.application = {
+        id: applicationId, // Set the application ID
+        date: admissionDate, // Set the admission date
+      };
+
+      // Save the updated staff document
+      await staff.save();
+    }
+
+    // Save the updated application
+    await application.save();
+
+    // Redirect to the application details page after saving
+    res.redirect(`/admin/applications/${applicationId}`);
+  } catch (error) {
+    console.error("Error updating application:", error);
+    res.status(500).send('Server Error');
+  }
+};
+
+
+
+const loadStaffController = async (req, res) => {
+  try {
+    const sectionId = req.params.sectionId; 
+    let staffList;
+
+    if (sectionId) {
+      // Fetch staff linked to the selected section/department
+      staffList = await Staff.find({ 'jobRole.section': sectionId }, '-password');
+    } else {
+      // If no section is selected, fetch all staff
+      staffList = await Staff.find({}, '-password');
+    }
+
+    const successMessage = req.query.message || null;
+    const errorMessage = req.query.error || null;
+
+    res.render('admin/pages/staffController', {
+      staffList,           // Pass the staff list based on the section
+      successMessage,      // Any success messages to be displayed
+      errorMessage, 
+      sectionId ,
+      title: 'Staff Management',
+    });
+  } catch (err) {
+    console.error("Error fetching staff details:", err);
+    res.status(500).send('Server Error');
+  }
+};
+
+
+
+const loadAddStaff = async (req, res) => {
+  try {
+    const sectionId= req.params.sectionId;
+
+    if (!sectionId) {
+      return res.status(400).send('Section ID not provided');
+    }
+
+    // Fetch the job section by the provided sectionId
+    const jobSection = await JobSection.findById(sectionId);
+    if (!jobSection) {
+      return res.status(404).send('Job section not found');
+    }
+
+    // Render the add staff form with job roles related to the section
+    res.render('admin/pages/addStaff', { jobRoles: jobSection.jobRoles, title: 'ADD STAFF',sectionId});
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error loading page');
+  }
+};
+
+
+
+
+const addStaffController = async (req, res) => {
+  try {
+    const sectionId = req.params.sectionId;  // Get sectionId from the URL params
+    const { name, email, mobileNumber, alternativeNumber, jobRoleType, salary, password, confirmPassword } = req.body;
+
+    // Password confirmation check
+    if (password !== confirmPassword) {
+      return res.render('admin/pages/addStaff', {
+        errorMessage: 'Passwords do not match',
+        title: 'Add Staff',
+        sectionId // Pass sectionId back to the view to maintain it in the form action
+      });
+    }
+
+    // Check if a staff member with the same email already exists
+    const staffExists = await Staff.findOne({ email });
+    if (staffExists) {
+      return res.render('admin/pages/addStaff', {
+        errorMessage: 'Staff with this email already exists',
+        title: 'Add Staff',
+        sectionId // Pass sectionId back to the view to maintain it in the form action
+      });
+    }
+
+    // Create a new staff object
+    const staff = new Staff({
+      id: `STAFF-${Date.now()}`,
+      name,
+      email,
+      mobileNumber,
+      alternativeNumber,
+      jobRole: {
+        section: sectionId,
+        type: jobRoleType,
+      },
+      salary,
+      password,
+      profilePicture: req.files['profilePicture'] ? req.files['profilePicture'][0].filename : null,
+      documents: req.files['documents'] ? req.files['documents'].map(file => file.filename) : [],
+    });
+
+    // Save the staff to the database
+    await staff.save();
+
+    // Redirect to the staff management page with a success message
+    res.redirect(`/admin/staff-management/${sectionId}?message=Staff ID generated successfully`);
+  } catch (err) {
+    console.error('Error adding staff:', err);
+    res.status(500).send('Server Error');
+  }
+};
+
+
+
+
+
+
+
+
+
+//for loading staff verification
+const loadStaffVerification  = async (req, res) => {
+if (!req.session.staffId) {
+res.render('admin/pages/staffVerification', { title: 'Staff Verification' });
+} else {
+res.redirect('/admin/staff'); // Redirect to staff controller if already logged in
+}
+};
+
+
+
+
+// for staff verification
+const StaffVerification = async (req, res) => {
+  try {
+    const { emailOrId, password } = req.body; // Use 'password' (lowercase)
+
+    const staff = await Staff.findOne({ $or: [{ email: emailOrId }, { id: emailOrId }] });
+
+
+    if (!staff) {
+      return res.status(401).json({ message: 'Invalid Email/ID or Password' });
+    }
+
+    const isMatch = await bcrypt.compare(password, staff.password); // Use staff.password
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Invalid Email/ID or Password' });
+    }
+
+    req.session.staffId = staff._id;
+
+    res.redirect('/admin/applications');
+  } catch (err) {
+    console.error("Error verifying staff:", err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+
+
+
+
+
+const loadSectionsController = async (req, res) => {
+  try {
+    // Fetch all sections from the JobSection collection
+    const sectionList = await JobSection.find({}, 'sectionName'); // Only fetch section names
+
+    const successMessage = req.query.message || null;
+    const errorMessage = req.query.error || null;
+
+    // Render the page with the sections
+    res.render('admin/pages/jobDepartmentController', {
+      sectionList, // Send the list of section names to the template
+      successMessage,
+      errorMessage,
+      title: 'Sections Controller',
+    });
+  } catch (err) {
+    console.error("Error fetching sections:", err);
+    res.status(500).send('Server Error');
+  }
+};
+
+
+
+
+
+// Render add department page
+const loadAddSection = async (req, res) => {
+  try {
+    const successMessage = req.query.message || null;  // Retrieve message from query, default to null
+    const errorMessage = req.query.error || null;      // Retrieve error from query, default to null
+
+    res.render('./admin/pages/addJobDepartment', { 
+      title: 'Add JobDepartment',
+      successMessage,  // Pass successMessage to the template
+      errorMessage     // Pass errorMessage to the template
+    });
+  } catch (error) {
+    console.error('Error loading add department page:', error.message);
+    res.status(500).json({ message: 'Error loading add department page', error: error.message });
+  }
+};
+
+
+
+// POST Controller for handling form submissions
+const addSectionAndJobRoles = async (req, res) => {
+  try {
+    const { sectionName, jobRoles } = req.body;
+
+    // Server-side validation for sectionName and jobRoles
+    if (!sectionName || !jobRoles) {
+      return res.redirect('/admin/sections-management?error=All%20fields%20are%20required');
+    }
+
+    // Create a new JobSection document
+    const newSection = new JobSection({
+      sectionName: sectionName.trim(),
+      jobRoles: jobRoles.split(',').map(role => role.trim())  // Split jobRoles by commas and trim whitespace
+    });
+
+    // Save the new section
+    await newSection.save();
+
+    // Redirect with success message
+    res.redirect('/admin/sections-management?message=Section%20added%20successfully');
+  } catch (err) {
+    console.error("Error adding section and job roles:", err);
+    res.redirect('/admin/sections-management?error=Failed%20to%20add%20section');
+  }
+};
+
+
+
+
+
 
 
 
@@ -655,5 +971,15 @@ module.exports = {
   loadDepartmentSubjects,
   loadAddSubject,
   addSubject,
-  loadAdmissionController
+  loadAdmissionController,
+  loadApplicationDetails,
+  updateApplicationDetails,
+  loadStaffController,
+  loadAddStaff,
+  addStaffController,
+  loadStaffVerification,
+  StaffVerification,
+  loadSectionsController,
+  loadAddSection,
+  addSectionAndJobRoles,
 };

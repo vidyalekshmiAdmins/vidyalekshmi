@@ -3,7 +3,7 @@ const College = require('../model/collegeModel');
 const Department = require('../model/departmentModel');
 const Subject = require('../model/subjectModel');
 const bcrypt = require('bcrypt');
-
+const AdmissionApplication = require('../model/admissionApplication');
 
 
 
@@ -149,8 +149,6 @@ const getAllDepartments = async (req, res) => {
 const addSelectedDepartments = async (req, res) => {
   try {
     const { departments } = req.body;
-    console.log('Selected Departments:', departments);
-
     const collegeId = req.session.collegeId;
 
     if (!collegeId) {
@@ -198,6 +196,7 @@ const addSelectedDepartments = async (req, res) => {
         college.courses.push({
           deptId: department._id,
           deptName: department.name,
+          subjects: [] // Initialize subjects array if needed
         });
       }
     }
@@ -210,7 +209,6 @@ const addSelectedDepartments = async (req, res) => {
       res.redirect('/college/dashboard');
     } catch (saveError) {
       console.error('Error saving college:', saveError);
-      // Check for validation errors
       if (saveError.name === 'ValidationError') {
         res.status(400).send(`Validation Error: ${saveError.message}`);
       } else {
@@ -222,6 +220,7 @@ const addSelectedDepartments = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
 
 
 
@@ -246,11 +245,10 @@ const searchDepartments = async (req, res) => {
 
 
 
-
 const getSubjectsByDept = async (req, res) => {
   try {
-    const { deptId } = req.params;
-    const collegeId = req.session.collegeId;
+    const { deptId } = req.params; // Department ID passed in request parameters
+    const collegeId = req.session.collegeId; // College ID from session
 
     // Find the college document containing the specified department
     const college = await College.findOne({ "courses.deptId": deptId });
@@ -260,29 +258,29 @@ const getSubjectsByDept = async (req, res) => {
       return res.status(404).send('College not found');
     }
 
-    // Extract department details from the found college course
+    // Extract department details from the found college's courses array
     const department = college.courses.find(course => course.deptId.equals(deptId));
 
+    // If department is not found within the college's courses, send error
     if (!department) {
       return res.status(404).send('Department not found');
     }
 
-    // Extract subjects belonging to the department
+    // Extract the subjects linked to the found department
     const deptSubjects = department.subjects;
 
+    // Render the subjects view with department and subject details
     res.render('./college/pages/subjects', {
-      subjects: deptSubjects,
-      department, // Now contains the entire department object
-      deptId,
-      title: `All Subjects ${department.deptName}`
+      subjects: deptSubjects, // Pass the filtered subjects linked to the department
+      department, // Pass the department details
+      deptId, // Pass the department ID for further use
+      title: `All Subjects in ${department.deptName}` // Dynamic title for the view
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching subjects:', error);
     res.status(500).send('Server error');
   }
 };
-
-
 
 
 
@@ -350,7 +348,8 @@ const searchSubjects = async (req, res) => {
 };
 
 
-// Add Selected Subjects
+
+// to add the selected subjects to the college db
 const addSelectedSubjects = async (req, res) => {
   const { selectedSubjects, noOfSemesters, feePerSemester, deptId } = req.body;
   const collegeId = req.session.collegeId;
@@ -374,15 +373,23 @@ const addSelectedSubjects = async (req, res) => {
         return res.status(404).send(`Subject with ID ${subjectId} not found`);
       }
 
+      // Fetch the course (department) where the subject is to be added
       const course = college.courses.find(course => course.deptId.equals(deptId));
+      if (!course) {
+        return res.status(404).send(`Department with ID ${deptId} not found in college`);
+      }
+
+      // Check if the subject already exists in the course
       const existingSubject = course.subjects.find(s => s.subjectId.toString() === subjectId);
 
       if (!existingSubject) {
+        // Add the new subject with its graduation type
         course.subjects.push({
           subjectId,
           name: subject.name,
           noOfSemesters,
           feePerSemester,
+          GraduationType: subject.GraduationType, // Add GraduationType from the Subject DB
         });
       }
     }
@@ -398,6 +405,137 @@ const addSelectedSubjects = async (req, res) => {
 
 
 
+// Controller to load admissions for a particular college
+const loadAdmissionsPage = async (req, res) => {
+  try {
+    // Get the collegeId from the session
+    const collegeId = req.session.collegeId;
+
+    if (!collegeId) {
+      return res.status(400).send('No college selected.');
+    }
+
+    // Fetch the college details
+    const college = await College.findById(collegeId);
+
+    if (!college) {
+      return res.status(404).send('College not found.');
+    }
+
+    // Fetch the applications with status 'took admission'
+    const applications = await AdmissionApplication.find({
+      collegeId: collegeId,
+      status: 'took admission',
+    })
+    .populate('course', 'name') // Populate course with only the name field
+    .populate('deptId', 'name') // Populate department with only the name field
+    .populate('userId', 'name'); // Optionally populate the user if needed
+
+
+    // Check if there are applications
+    if (!applications || applications.length === 0) {
+      return res.render('./college/pages/admissions', {
+        college: college.name,
+        applications: [],
+        message: 'No admissions have been taken yet.',
+        title: 'Admissions Page', // Ensure title is passed correctly
+      });
+    }
+
+    // Render the EJS template with the application data
+    res.render('./college/pages/admissions', {
+      college: college.name,
+      applications: applications, // Pass the applications array to the view
+      message: null, // No error message, since there are applications
+      title: 'Admissions Page' // Pass the title for the page
+    });
+  } catch (error) {
+    console.error('Error loading admissions:', error);
+    res.status(500).send('Server error');
+  }
+};
+
+
+
+
+// Controller to load admission requests for a particular college
+const loadAdmissionRequestsPage = async (req, res) => {
+  try {
+    // Get the collegeId from the session
+    const collegeId = req.session.collegeId;
+
+    if (!collegeId) {
+      return res.status(400).send('No college selected.');
+    }
+
+    // Fetch the college details
+    const college = await College.findById(collegeId);
+
+    if (!college) {
+      return res.status(404).send('College not found.');
+    }
+
+    // Fetch the applications with status 'college approval pending'
+    const applications = await AdmissionApplication.find({
+      collegeId: collegeId,
+      status: 'college approval pending',
+    })
+    .populate('course', 'name') // Populate course with only the name field
+    .populate('deptId', 'name') // Populate department with only the name field
+    .populate('userId', 'name'); // Optionally populate the user if needed
+
+    // Render the EJS template with the application data
+    res.render('./college/pages/admissionRequests', {
+      college: college.name,
+      applications: applications, // Pass the applications array to the view
+      title: 'Admission Requests Page' // Pass the title for the page
+    });
+  } catch (error) {
+    console.error('Error loading admission requests:', error);
+    res.status(500).send('Server error');
+  }
+};
+
+
+
+
+
+
+
+
+
+// Controller to handle accepting or rejecting admission requests
+const updateAdmissionStatus = async (req, res) => {
+  try {
+    // Get the application ID and action from the URL parameters
+    const { applicationId, action } = req.params;
+
+    // Find the application by ID
+    const application = await AdmissionApplication.findById(applicationId);
+
+    if (!application) {
+      return res.status(404).send('Admission application not found.');
+    }
+
+    // Update the status based on the action (accept or reject)
+    if (action === 'accept') {
+      application.status = 'took admission';
+    } else if (action === 'reject') {
+      application.status = 'Declined by college';
+    } else {
+      return res.status(400).send('Invalid action.');
+    }
+
+    // Save the updated application status
+    await application.save();
+
+    // Redirect back to the admission requests page
+    res.redirect('/college/admission-requests');
+  } catch (error) {
+    console.error('Error updating admission status:', error);
+    res.status(500).send('Server error');
+  }
+};
 
 
 
@@ -415,4 +553,7 @@ module.exports = {
   searchSubjects,
   getAllSubjects,
   addSelectedSubjects,
+  loadAdmissionsPage,
+  loadAdmissionRequestsPage,
+  updateAdmissionStatus
 };

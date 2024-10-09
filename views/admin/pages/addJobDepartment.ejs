@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/path/to/your/css"> <!-- Adjust CSS path if needed -->
+  <script>
+    // Client-side validation
+    function validateForm() {
+      const sectionName = document.getElementById('sectionName').value.trim();
+      const jobRoles = document.getElementById('jobRoles').value.trim();
+      
+      if (!sectionName) {
+        alert('Department Name is required');
+        return false;
+      }
+      
+      if (!jobRoles) {
+        alert('Job Roles are required');
+        return false;
+      }
+      
+      return true; // Form is valid
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Manage Departments and Job Roles</h1>
+
+    <% if (successMessage) { %>
+      <div class="alert alert-success"><%= successMessage %></div>
+    <% } %>
+    
+    <% if (errorMessage) { %>
+      <div class="alert alert-danger"><%= errorMessage %></div>
+    <% } %>
+    
+    <!-- Combined form to add department and job roles -->
+    <h2>Add Department and Job Roles</h2>
+    <form action="/admin/sections-management" method="POST" onsubmit="return validateForm()">
+      
+      <!-- Department Name Field -->
+      <div class="form-group">
+        <label for="sectionName">Department Name:</label>
+        <input type="text" id="sectionName" name="sectionName" class="form-control" required>
+      </div>
+      
+      <!-- Job Roles Field -->
+      <div class="form-group">
+        <label for="jobRoles">Job Roles (use commas to separate multiple roles):</label>
+        <input type="text" id="jobRoles" name="jobRoles" class="form-control" required>
+        <small class="form-text text-muted">Use commas and write as many job roles as you want to add.</small>
+      </div>
+      
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary">Add Department</button>
+    </form>
+    
+  </div>
+
+  <script src="/path/to/your/js"></script> <!-- Adjust JS path if needed -->
+</body>
+</html>

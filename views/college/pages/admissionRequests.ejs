@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admission Requests - College</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS -->
+</head>
+<style>
+  /* General Styles */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  /* Buttons */
+  button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .primary-btn {
+    background-color: #3498db;
+    color: #fff;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .primary-btn:hover {
+    background-color: #2980b9;
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead {
+    background-color: #3498db;
+    color: #fff;
+  }
+
+  thead th {
+    padding: 12px;
+    text-align: left;
+  }
+
+  tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  td button {
+    padding: 8px 16px;
+  }
+
+  #collegeName {
+    color: #2980b9;
+  }
+
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .container {
+      padding: 10px;
+    }
+
+    h1 {
+      font-size: 24px;
+    }
+
+    table {
+      font-size: 12px;
+    }
+
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    button {
+      margin-top: 10px;
+    }
+  }
+</style>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Admission Requests for <span id="collegeName"><%= college %></span></h1>
+    </header>
+
+    <div class="admissions-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Admission ID</th>
+            <th>Name</th>
+            <th>Course</th>
+            <th>Department</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (applications && applications.length > 0) { %>
+            <% applications.forEach(function(application) { %>
+              <tr>
+                <td><%= application.staff.admission_id || 'N/A' %></td>
+                <td><%= application.name %></td>
+                <td><%= application.course %></td>
+                <td><%= application.deptId.name %></td>
+                <td><%= application.status %></td>
+                <td>
+                  <button class="primary-btn" onclick="location.href='/college/admission-request/accept/<%= application._id %>'">Accept</button>
+                  <button class="secondary-btn" onclick="location.href='/college/admission-request/reject/<%= application._id %>'">Reject</button>
+                </td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="6">No admission requests pending approval.</td>
+            </tr>
+          <% } %>
+        </tbody>
+        
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>

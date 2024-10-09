@@ -7,27 +7,28 @@ const adminController = require('../controller/adminController');
 // const categoryController = require('../controller/categoryController');
 // const productController = require('../controller/productControl')
 const adminAuth=require('../middleware/adminAuth')
-
+const isStaffVerified=require('../middleware/staffAuth')
 
 require('dotenv').config()
 
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = path.join(__dirname, '../public/admin/uploads');
-    // Check if directory exists, create it if necessary
-    fs.promises.access(uploadDir, fs.constants.F_OK)
-      .then(() => cb(null, uploadDir))
-      .catch(() => fs.promises.mkdir(uploadDir, { recursive: true })
-        .then(() => cb(null, uploadDir)));
-  },
+    
+    cb(null, path.join(__dirname, '../public/admin/uploads'));},
+
+
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    const name=Date.now()+ '-'+file.originalname;
+    cb(null,name)
+    // cb(null, file.fieldname  + Date.now() + path.extname(file.originalname));
   }
 });
 
-const upload = multer({
- storage: storage
- });
+const upload = multer({ storage: storage });
+module.exports = {upload};
+
+
 
 
 
@@ -131,7 +132,10 @@ adminRoute.get('/department', adminAuth.isLogin, adminController.viewDepartments
 
 adminRoute.get('/department/add', adminAuth.isLogin, adminController.loadAddDepartment);
 
-adminRoute.post('/department/add', upload.fields('image'), adminAuth.isLogin, adminController.addDepartment);
+adminRoute.post('/department/add', upload.fields([
+  { name: 'image', maxCount: 1 }
+]), adminAuth.isLogin, adminController.addDepartment);
+
 
 adminRoute.get('/department/:id/subjects', adminAuth.isLogin, adminController.loadDepartmentSubjects);
 
@@ -142,6 +146,43 @@ adminRoute.post('/department/:id/subjects/add', adminAuth.isLogin, adminControll
 
 // for admission controller
 adminRoute.get('/applications', adminAuth.isLogin, adminController.loadAdmissionController);
+
+adminRoute.get('/applications/:id', adminController.loadApplicationDetails);
+// Route to update application status and admission details
+adminRoute.post('/applications/:id/update', adminController.updateApplicationDetails);
+
+
+adminRoute.get('/staff/verification',adminAuth.isLogin,adminController.loadStaffVerification);
+
+adminRoute.post('/staff/verification',adminAuth.isLogin,adminController.StaffVerification);
+
+
+
+//for staff management
+
+// Route to load the staff management page
+adminRoute.get('/staff-management/:sectionId', adminAuth.isLogin, adminController.loadStaffController);
+
+// Route to add a new staff member
+adminRoute.get('/add-staff/:sectionId', adminAuth.isLogin, adminController.loadAddStaff);
+adminRoute.post('/staff/add/:sectionId', adminAuth.isLogin, upload.fields([
+  { name: 'profilePicture', maxCount: 1 },
+  { name: 'documents', maxCount: 10 }
+]), adminController.addStaffController);
+
+
+// // Route to view details of a specific staff member
+// adminRoute.get('/staff/:id', adminAuth.isLogin, adminController.viewStaffDetails);
+
+
+// Route for section management
+adminRoute.get('/sections', adminAuth.isLogin, adminController.loadSectionsController);
+
+// Add these routes to your admin route file
+adminRoute.get('/sections-management', adminAuth.isLogin, adminController.loadAddSection);
+adminRoute.post('/sections-management', adminAuth.isLogin, adminController.addSectionAndJobRoles);
+
+
 
 
 module.exports = adminRoute;

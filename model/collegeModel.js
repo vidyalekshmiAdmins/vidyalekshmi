@@ -27,6 +27,11 @@ const collegeSubjectSchema = new Schema({
     required: true,
     trim: true,
   },
+
+  GraduationType: {
+    type: String,
+},
+
   noOfSemesters: {
     type: Number,
     validate: {
@@ -40,7 +45,7 @@ const collegeSubjectSchema = new Schema({
       validator: (value) => value > 0,
       message: 'Fee per semester should be a positive number.'
     }
-  }
+  },
 });
 
 // Department Schema inside College Schema
@@ -105,7 +110,7 @@ const collegeSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ['aided', 'un-aided', 'govt'],
+    enum: ['AIDED', 'SELF-FINANCING', 'GOVT'],
     required: true,
   },
   category: {

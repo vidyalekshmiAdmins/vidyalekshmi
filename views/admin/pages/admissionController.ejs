@@ -64,6 +64,7 @@
             <i class="fas fa-file-alt text-primary"></i>
             <span>Admission Application</span>
             <ul>
+              <li>Applicant Name: <%= application.name %></li>
               <li>Status: <%= application.status %></li>
               <li>College: <%= application.collegeId.name %> (<%= application.collegeId._id %>)</li>
               <li>Department: <%= application.deptId.name %> (<%= application.deptId._id %>)</li>

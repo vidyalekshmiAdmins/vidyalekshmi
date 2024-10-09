@@ -19,6 +19,12 @@ const subjectSchema = new Schema({
       trim: true,
     },
   }],
+  GraduationType: {
+    type: String,
+    enum: ['Under Graduate', 'Post Graduate', 'Diploma', 'Post Diploma', 'Research', 'Certificate Course' , 'Craft Course', 'Others'],
+    default: 'Under Graduate',
+    required: true,
+},
 });
 
 module.exports = mongoose.model('Subject', subjectSchema);

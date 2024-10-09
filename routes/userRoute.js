@@ -83,6 +83,7 @@ user_route.post('/applyForCertificate', userAuth.isLogin, servicesController.app
 
 // Route for loading the admissions page
 user_route.get('/admissions', userAuth.isLogin, userController.loadAdmissions);
+user_route.post('/admissions/filter', userAuth.isLogin, userController.filterAdmissions);
 user_route.get('/departments/:deptId', userAuth.isLogin, userController.loadDeptAdmissions);
 
 user_route.get('/collegeApplication/:collegeId', userAuth.isLogin, userController.loadCollegeApplication);

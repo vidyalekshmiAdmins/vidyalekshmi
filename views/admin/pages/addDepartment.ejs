@@ -7,17 +7,21 @@
   <link rel="stylesheet" href="/path/to/your/css/style.css">
 </head>
 <body>
-  <h1>Add Department</h1>
-  <form action="/admin/department/add" method="POST">
+  <h1>Add Academics / Group</h1>
+  <form action="/admin/department/add" method="POST" enctype="multipart/form-data">
     <div>
-    <label for="name">Department Name:</label>
-    <input type="text" id="name" name="name" required>
+      <label for="name">Group Name:</label>
+      <input type="text" id="name" name="name" required>
     </div>
     
-      <label for="image">Image:</label>
-      <input type="file" id="image" name="image" accept="image/*"> </div>
-    <button type="submit">Add Department</button>
+    <div>
+      <label for="image"  class="form-label">IMAGE</label>
+      <input type="file" class="form-control" id="image" name="image">
+    </div>
+    
+    <button type="submit">Add Group</button>
   </form>
 </body>
 </html>
-  
+
+
