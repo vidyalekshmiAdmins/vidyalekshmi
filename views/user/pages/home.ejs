@@ -20,116 +20,212 @@
   padding: 0;
 }
 .section-1 {
-  background-image: linear-gradient(0deg, rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url("/user/img/firstImage.png");
-  
-background-size: cover;
-background-repeat: no-repeat;
-background-position: center;
-margin: 0;
-
-}
-
-
-.section-1-div-1{
-  min-height: 902px;
-}
-
-.section-1-div-1-text-1 {
-  position: relative;
-  z-index: 1;
-  font-size: 4.375rem;
-  color: rgba(254, 250, 250, 0.873);
-  display: flex;
-  justify-content: center;
-  height: 65vh;
-  padding: 0;
-  line-height: 1.6;
-  font-weight: 400; /* Semi-bold */
-  font-family: 'Open Sans', sans-serif;
-  text-align: center;
- 
-}
-
-.text-2 {
-  font-size: 1.8rem;
-  color: white;
-  letter-spacing: 2px;
-  text-shadow: 0px 0px 22px rgba(0,0,0,0.35);
-  box-shadow: 0px 0px 0 0 rgba(0,0,0,0);
-  display: flex;
-  justify-content: center;
-  font-family: 'Open Sans';
-  font-weight: 100;
-  line-height: 1.6
-}
-
-.button-section-1 {
+  background-image: url("/user/img/firstImage.png");
+    filter: brightness(1);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
+  position: relative;
 }
 
-.button-section-1 .u-btn-1 {
+
+
+
+
+.section-1-div-1-text-1, .text-2 {
+  text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.section-1-div-1 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
   color: white;
-  font-family: 'Open Sans', sans-serif;
-  text-decoration: none;
-  border-style: none;
-  font-weight: 700;
-  text-transform: uppercase;
+  z-index: 1;
+  width: 100%;
+  max-width: 700px;
+  margin-top: -70px;
+
+}
+
+.logo-container {
+  display: inline-block; 
+}
+
+.logo {
+  max-width: 600px;
+  max-height: 600px; /* Adjust the size as needed */
+  
+}
+
+.section-1-div-1-text-1 {
+  font-size: 2.8rem;
+  line-height: 1.6;
+  font-weight: 450;
+  color: rgba(254, 250, 250, 0.9);
+}
+
+
+.button-section-1 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columns */
+  gap: 15px; /* Adjusted gap between buttons */
+  position: absolute;
+  bottom: 40px;
+  width: 100%;
+  max-width: 600px;
+  margin-right: 0%;
+}
+
+.u-btn-1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px; /* Reduced height for the buttons */
   font-size: 0.875rem;
-  background-image: none;
-  margin: 0 auto;
-  padding: 15px 51px 16px;
-  margin-right: 10px; 
-  background-image: linear-gradient(to Top, #85d4f197, #006d7700 );
+  font-weight: bold;
+  text-transform: uppercase;
+  color: white;
+  text-decoration: none;
+  border: 1px solid white;
+  border-radius: 30px;
+  transition: background 0.3s, color 0.3s;
+  box-sizing: border-box;
+}
 
-  border-radius: 40px;
+.u-btn-1:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #85d4f1;
+}
 
+/* Media query for responsiveness (optional) */
+@media (max-width: 600px) {
+  .button-section-1 {
+    max-width: 100%;
+    right: 0;
+    bottom: 20px;
+  }
 }
 
 
 .section-2 {
-  background-image: linear-gradient(to bottom, #d9fcff, #84d9f7);
-}
-
-
-
-
-.section-2 .sheet-1 {
-  min-height: 779px;
-}
-
-.section-2 .text-1 {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-color: #f4f6f3;
   text-align: center;
+  min-height: 100vh;
 }
 
-.section-2 .list-1 {
-  margin-bottom: 0;
-  margin-top: 213px;
+.header-section {
+  background-color: #f4f6f3; /* Soft green background */
+  border-top: 50px solid #8fa98d; /* Slightly darker green border */
+  border-bottom: 5px solid #8fa98d; 
+  width: 100vw;
+  text-align: center; /* Center align the text */
+  padding: 20px 0; /* Vertical padding for spacing */
+  margin: 0; /* No margin for alignment */
+}
+
+.header-section h1 {
+  font-family: 'Arial', sans-serif; /* Clean sans-serif font */
+  font-weight: 600; /* Medium font weight */
+  color: #4F5E4D; /* Dark green text */
+  font-size: 27px; /* Adjust font size */
+  margin: 0; /* Remove default margins */
 }
 
 
-.section-2 .grid-container {
-  margin-left: 80px;
+
+.carousel {
+  padding-top: 60px
+  ;
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
-.section-2 .grid-item {
-  flex: 0 0 calc(33.33% - 20px); /* Adjust width based on desired spacing */
-  margin: 10px;
+.carousel-track-container {
+  overflow: hidden;
+  width: 80%; /* Adjust width to fit three slides */
 }
 
-.section-2 .grid-item h2 {
-  font-size: 1.5rem;
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.section-2 .grid-item img {
+.carousel-slide {
+  flex: 0 0 calc(33.33% - 20px); /* 33.33% width for three slides */
+  margin: 0 10px;
+  border-radius: 55px; /* Apply rounded corners */
+  overflow: hidden; /* Ensures content stays within the rounded corners */
+}
+
+.card {
+  position: relative;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border: 2px;
+  border-radius: 25px; /* Apply a uniform rounded corner */
+  text-align: center;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+
+.card:hover {
+  transform: scale(1);
+  background-color: #000000;
+}
+
+.card img {
   width: 100%;
-  height: auto;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.card h3 {
+  font-size: 1.6rem;
+  margin: 10px 0;
+  color: #333;
+}
+
+.card p {
+  font-size: 1.3rem;
+  color: #666;
+}
+
+.carousel-arrow {
+  position: absolute; 
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;  /* Keep the cursor style */
+  z-index: 1000;
+  background-color: transparent;  /* Remove background */
+  border: none;  /* Remove any border */
+  padding: 0;  /* Remove padding */
+  width: 20px;  /* Define width if necessary for the arrow icon */
+  height: 20px;  /* Define height if necessary for the arrow icon */
+}
+
+.carousel-arrow:hover {
+  background-color: #000305;
+}
+
+.left-arrow {
+  left: 10px;
+}
+
+.right-arrow {
+  right: 10px;
 }
 
 
@@ -279,85 +375,74 @@ margin-top: 100px;
 
 
   
-<section  class="section-1">
+  <section class="section-1">
+    <%- include('../partials/header') %>
+  
+    <div class="section-1-div-1">
+      <div class="logo-container">
+        <img src="/user/img/whiteLogo.png" alt="Logo" class="logo">
+      </div>
+      
+      <h1 class="section-1-div-1-text-1">
+        "Your Future Starts Here.<br>Let's Navigate The Path Together."
+      </h1>
 
-
-  <%- include('../partials/header') %>
-  <div  class="section-1-div-1">
-
-    <h1  class="section-1-div-1-text-1">
-      <span style=" font-size: 3.125rem;  margin-top: 90px; ">"Empower yourself with knowledge and skills,
-        <br> not just a stack of books."</span>
-    </h1>
-    
-    <p class="text-2"> Our Services</p>
-    
-    
-    
+        <!-- Button container moved directly after the text container -->
     <div class="button-section-1">
-      <a href="/universityServices" class="u-btn-1" style="margin-left: 10px;">UNIVERSITTY<br>SERVICES</a>
+      <a href="/universityServices" class="u-btn-1">UNIVERSITY<br>SERVICES</a>
       <a href="overseas_education.html" class="u-btn-1">OVERSEAS<br>EDUCATION</a>
       <a href="/admissions" class="u-btn-1">ADMISSIONS</a>
       <a href="online_distance_education.html" class="u-btn-1">ONLINE & DISTANCE&nbsp;<br>EDUCATION</a>
-      
     </div>
-        </div>
-</section>
 
-
-
-
-<section class="section-2">
-
-  <div class="sheet-1">
-
-    <h2 class="text-1" >Top Collages With Highest Number Of&nbsp;<br>Graduates L​​​ast Ye​​​​ar 
-    </h2>
-
-
-    <div class="list-1">
-      <div class=" repeater-1">
-        <div class="repeater-item">
-          <div class="container-layout similar-container container-layout-1"></div>
-        </div>
-        <div class="repeater-item">
-          <div class="container-layout similar-container container-layout-2"></div>
-        </div>
-      </div>
-  </div>
-
-
-
-
-
-
-      <div class="grid-container">
-        <div class="grid-item">
-          <h2>Main Heading 1</h2>
-          <img src="image1.jpg" alt="Image 1">
-          <p>A small description about the first item.</p>
-        </div>
-        <div class="grid-item">
-          <h2>Main Heading 2</h2>
-          <img src="image2.jpg" alt="Image 2">
-          <p>A small description about the second item.</p>
-        </div>
-        <div class="grid-item">
-          <h2>Main Heading 3</h2>
-          <img src="image3.jpg" alt="Image 3">
-          <p>A small description about the third item.</p>
-        </div>
-      </div>
-      
-
-      
-
-
+    </div>
+    
+   
+  </section>
   
-</div>
 
-</section>
 
+
+
+  <section class="section-2">
+    <div class="sheet-1">
+      <div class="text-1">
+        <div class="header-section">
+          <h1>Top Colleges With Highest Number <br>Of Graduates Last Year</h1>
+        </div>
+    </div> 
+  
+    <% if (topColleges && topColleges.length > 0) { %>
+      <div class="carousel">
+        <button class="carousel-arrow left-arrow">&lt;</button>
+        <div class="carousel-track-container">
+          <ul class="carousel-track">
+            <% topColleges.forEach((college) => { %>
+              <li class="carousel-slide">
+                <div class="card">
+                  <% if (college.images && college.images.length > 0) { %>
+                    <img src="<%= college.images[0].path %>" alt="<%= college.name %>" class="college-image">
+                  <% } else { %>
+                    <img src="/images/default-college.jpg" alt="Default Image" class="college-image">
+                  <% } %>
+                  <div class="college-details">
+                    <h3><%= college.name %></h3>
+                    <p><strong>Location:</strong> <%= college.district %>, <%= college.state %></p>
+                    <p><strong>Established:</strong> <%= college.establishedIn %></p>
+                  </div>
+                </div>
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+        <button class="carousel-arrow right-arrow">&gt;</button>
+      </div>
+      
+    <% } else { %>
+      <p>No colleges found.</p>
+    <% } %>
+  </section>
+  
 
 <section class="section-3">
  
@@ -413,7 +498,12 @@ margin-top: 100px;
         <a href="#">More</a>
       </div>
     </div>
+
+
+
   </div>
+  
+
   
   
 </section>
@@ -425,7 +515,60 @@ margin-top: 100px;
 
 
 
-//
+<script>
+ const track = document.querySelector(".carousel-track");
+const slides = Array.from(track.children);
+const leftArrow = document.querySelector(".left-arrow");
+const rightArrow = document.querySelector(".right-arrow");
+
+const slideWidth = slides[0].getBoundingClientRect().width;
+let currentIndex = 0;
+
+// Position the slides side by side
+slides.forEach((slide, index) => {
+  slide.style.left = `${slideWidth * index}px`;
+});
+
+// Function to move to the next slide
+const moveToSlide = (index) => {
+  const newLeft = -slideWidth * index;
+  track.style.transform = `translateX(${newLeft}px)`;
+};
+
+// Auto-scroll functionality
+const autoScroll = setInterval(() => {
+  currentIndex = (currentIndex + 1) % slides.length;
+  moveToSlide(currentIndex);
+}, 2000);
+
+// Manual navigation with buttons
+leftArrow.addEventListener("click", () => {
+  currentIndex = (currentIndex === 0) ? slides.length - 1 : currentIndex - 1;
+  moveToSlide(currentIndex);
+
+  // Reset auto-scroll timer on manual navigation
+  resetAutoScroll();
+});
+
+rightArrow.addEventListener("click", () => {
+  currentIndex = (currentIndex + 1) % slides.length;
+  moveToSlide(currentIndex);
+
+  // Reset auto-scroll timer on manual navigation
+  resetAutoScroll();
+});
+
+// Reset auto-scroll timer
+const resetAutoScroll = () => {
+  clearInterval(autoScroll);
+  setInterval(() => {
+    currentIndex = (currentIndex + 1) % slides.length;
+    moveToSlide(currentIndex);
+  }, 1500);
+};
+
+</script>
+
 
 
 

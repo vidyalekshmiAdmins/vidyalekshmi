@@ -13,14 +13,14 @@
 
     .navbar-box {
       background-color: rgba(255, 255, 255, 0.137);
-      border-radius: 30px;
+      border-radius: 10px;
       border: 1px solid rgb(4, 3, 3);
       z-index: 999;
       position: fixed;
       top: 20px;
       left: 50%;
       transform: translateX(-50%);
-      width: 90%; /* Default width for smaller screens */
+      width: 100%; /* Default width for smaller screens */
       max-width: 650px; /* Maximum width to prevent excessive width on large screens */
     }
 
@@ -37,6 +37,15 @@
       justify-content: center;
       align-items: center;
     }
+    .navbar-brand-logo {
+  filter: brightness(0) invert(0); /* Makes it black */
+  transition: filter 0.3s ease; /* Smooth transition */
+}
+
+.logo:hover {
+  filter: none; /* Reverts to the original color */
+}
+
 
     .navbar-nav .nav-link img:hover {
       transform: scale(1.5);
@@ -93,7 +102,10 @@
     <div class="col-md-12">
       <div class="navbar-box">
         <nav class="navbar navbar-expand-lg navbar-light">
-          <a class="navbar-brand" href="#">Your Logo</a>
+          <a class="navbar-brand" href="#">
+            <img src="/user/img/whiteLogo.png" alt="Logo" class="navbar-brand-logo" style="height: 53px;">
+          </a>
+          
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>

@@ -149,6 +149,12 @@ const collegeSchema = new Schema({
     }
   },
   courses: [collegeDeptSchema],
+  admissions: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'AdmissionApplication',
+    },
+  ],
 });
 
 module.exports = mongoose.model('College', collegeSchema);

@@ -68,13 +68,22 @@ const verifyLogin = async (req, res) => {
 
 //for home page 
 
-const loadHome = async(req,res)=>{
+
+const loadHome = async (req, res) => {
   try {
-    res.render('./user/pages/home')
+    // Fetch top 10 colleges with the specified fields
+    const topColleges = await College.find()
+      .sort({ 'admissions.length': -1 }) // Sort by number of admissions in descending order
+      .limit(10) // Limit to top 10 colleges
+      .select('name district state establishedIn images'); // Select required fields
+
+    // Render the home page with the fetched colleges
+    res.render('./user/pages/home', { topColleges });
   } catch (error) {
-    throw new Error(error);
+    console.error('Error loading home page:', error);
+    res.status(500).send('Server Error');
   }
-}
+};
 
 
 
@@ -105,16 +114,14 @@ const loadUserRegistration = async (req, res) => {
 
 const userSignUP = async (req, res) => {
   try {
-    const { username, email, password, confirmPassword, mobileNumber } = req.body;
+    const { username, password, confirmPassword, mobileNumber } = req.body;
 
     // Validate user input
     const errors = [];
     if (!username || username.trim() === '') {
       errors.push('Username is required');
     }
-    if (!validator.isEmail(email)) {
-      errors.push('Invalid email format');
-    }
+   
     if (!password || password.trim() === '') {
       errors.push('Password is required');
     } else if (password.length < 6) {
@@ -134,9 +141,9 @@ const userSignUP = async (req, res) => {
 
 
     // Check for existing user
-    const checkData = await User.findOne({ email });
+    const checkData = await User.findOne({ mobileNumber });
     if (checkData) {
-      return res.render('./user/pages/userRegistration', { userCheck: "User already exists, please try with a new email",errors  });
+      return res.render('./user/pages/userRegistration', { userCheck: "User already exists, please try with a new NUMBER",errors  });
     }
 
     // Hash the password before saving
@@ -145,7 +152,6 @@ const userSignUP = async (req, res) => {
 
     const userData = {
       username,
-      email,
       password: hashedPassword,
       mobileNumber,
     };
@@ -317,60 +323,63 @@ const filterAdmissions = async (req, res) => {
     // Log the filtered colleges after population
     console.log('Filtered colleges after population:', colleges);
 
-    // Step 3: Filter the subjects based on selectedGroup and selectedGraduationType
-    const filteredSubjects = [];
+     // Step 2: Filter subjects based on selectedGroup and selectedGraduationType
+     const filteredSubjects = [];
 
     // Loop through each college
-    colleges.forEach(college => {
-      // Loop through each course in the college
-      college.courses.forEach(course => {
-        // Check if the course's department matches the selected group
-        const isGroupMatch = group === 'all' || new mongoose.Types.ObjectId(group).equals(course.deptId);
+colleges.forEach(college => {
+  // Loop through each course (department) in the college
+  college.courses.forEach(course => {
+    // Check if the course's department matches the selected group (if provided)
+    const isGroupMatch = group === 'all' || 
+      (course.deptId && course.deptId._id 
+        ? new mongoose.Types.ObjectId(group).equals(course.deptId._id)  // If deptId is populated
+        : new mongoose.Types.ObjectId(group).equals(course.deptId));     // If deptId is not populated
 
-        if (isGroupMatch) {
-          // Loop through each subject in the course
-          course.subjects.forEach(subject => {
-            // Access the populated subject's name and graduation type
-            const subjectName = subject.subjectId.name; // Use subjectId.name
-            const subjectGraduationType = subject.GraduationType;
+    if (isGroupMatch) {
+      // Proceed to filter subjects based on graduation type
+      course.subjects.forEach(subject => {
+        const subjectGraduationType = subject.GraduationType;
 
-            // Check if the subject's graduation type matches the selected graduation type
-            const isGraduationTypeMatch = graduationType === 'all' || subjectGraduationType === graduationType;
+        // Check if the subject's graduation type matches the selected graduation type
+        const isGraduationTypeMatch = graduationType === 'all' || subjectGraduationType === graduationType;
 
-            // If both conditions match, add to the filtered subjects
-            if (isGraduationTypeMatch) {
-              filteredSubjects.push({
-                collegeName: college.name,
-                departmentName: course.deptName,
-                subjectName: subjectName,
-                graduationType: subjectGraduationType,
-              });
-            }
+        if (isGraduationTypeMatch) {
+          // If both conditions match, add the subject to the filtered subjects list
+          filteredSubjects.push({
+            collegeName: college.name,
+            departmentName: course.deptName,
+            subjectName: subject.subjectId.name,  // Access the subject name from the populated subjectId
+            graduationType: subjectGraduationType,
+            noOfSemesters: subject.noOfSemesters,
+            feePerSemester: subject.feePerSemester,
           });
         }
       });
-    });
+    }
+  });
+});
 
-    // Log filtered results for debugging
-    console.log('Final filtered subjects:', filteredSubjects);
-
-    // Step 4: Render the template with the filtered data
-    res.render('./user/pages/admissions', {
-      colleges,
-      departments: await College.distinct('courses.deptName'),
-      subjects: filteredSubjects.length ? filteredSubjects : [],  // Pass the filtered subjects or an empty array if no subjects
-      states: await College.distinct('state'),
-      types: await College.distinct('type'),
-      categories: await College.distinct('category'),
-      graduationTypes: await College.distinct('courses.subjects.GraduationType'),
-      selectedFilters: { group, state, type, category, graduationType }, // Pass the selected filters
-    });
-  } catch (error) {
-    console.error('Error in filterAdmissions:', error);
-    res.status(500).render('error', { error: 'Something went wrong' });
-  }
-};
-
+ 
+     // Log filtered results for debugging
+     console.log('Final filtered subjects:', filteredSubjects);
+ 
+     // Step 3: Render the template with the filtered data
+     res.render('./user/pages/admissions', {
+       colleges,
+       departments: await College.distinct('courses.deptName'),
+       subjects: filteredSubjects.length ? filteredSubjects : [],  // Pass the filtered subjects or an empty array if no subjects
+       states: await College.distinct('state'),
+       types: await College.distinct('type'),
+       categories: await College.distinct('category'),
+       graduationTypes: await College.distinct('courses.subjects.GraduationType'),
+       selectedFilters: { group, state, type, category, graduationType }, // Pass the selected filters
+     });
+   } catch (error) {
+     console.error('Error in filterAdmissions:', error);
+     res.status(500).render('error', { error: 'Something went wrong' });
+   }
+ };
 
 
 

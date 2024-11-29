@@ -502,9 +502,6 @@ const loadAdmissionRequestsPage = async (req, res) => {
 
 
 
-
-
-// Controller to handle accepting or rejecting admission requests
 const updateAdmissionStatus = async (req, res) => {
   try {
     // Get the application ID and action from the URL parameters
@@ -520,6 +517,18 @@ const updateAdmissionStatus = async (req, res) => {
     // Update the status based on the action (accept or reject)
     if (action === 'accept') {
       application.status = 'took admission';
+
+      // Find the associated college
+      const college = await College.findById(application.collegeId);
+      if (!college) {
+        return res.status(404).send('College not found.');
+      }
+
+      // Add the admission application ID to the college's admissions array if not already present
+      if (!college.admissions.includes(application._id)) {
+        college.admissions.push(application._id);
+        await college.save();
+      }
     } else if (action === 'reject') {
       application.status = 'Declined by college';
     } else {
