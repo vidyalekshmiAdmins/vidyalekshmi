@@ -1,14 +1,19 @@
 {
-  "name": "VIDYALEKSHMI",
+  "name": "vidyalekshmi",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+
+"scripts": {
+  "start": "node index.js",
+  "dev": "nodemon index.js",
+  "test": "echo \"Error: no test specified\" && exit 1"
+}
+
+,
+
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "bootstrap": "^5.3.3",
     "connect-flash": "^0.1.1",
@@ -24,10 +29,22 @@
     "multer": "^1.4.5-lts.1",
     "nocache": "^4.0.0",
     "nodemailer": "^6.9.11",
-    "nodemon": "^3.1.0",
     "otp": "^1.1.2",
     "otp-generator": "^4.0.1",
     "twilio": "^5.0.2",
     "validator": "^13.12.0"
-  }
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vidyalekshmiAdmins/vidyalekshmi.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vidyalekshmiAdmins/vidyalekshmi/issues"
+  },
+  "homepage": "https://github.com/vidyalekshmiAdmins/vidyalekshmi#readme"
 }

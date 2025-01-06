@@ -1,284 +1,550 @@
-<%- include('../partials/header2') %>
+<%- include('../partials/header') %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>University Page</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>AKS College Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2d392d;
+            --primary-light: #92a792;
+            --secondary: #8fa98d;
+            --white: #ffffff;
+            --gray-light: #f5f7f5;
+            --gray: #e0e0e0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--gray-light);
+            color: var(--primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .college-header {
+            margin-top: 80px;
+            padding: 4rem 0;
+            background: var(--white);
+        }
+
+        .college-info {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .college-image-container {
+            flex: 0 0 400px;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .college-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .college-details {
+            flex: 1;
+            display: flex;
+            gap: 2rem;
+        }
+        .college-logo {
+            width: 100px;
+            height: 100px;
+            background: var(--primary-light);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--white);
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .college-name h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .college-location {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .rating {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: var(--primary-light);
+            color: var(--white);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-secondary {
+            background: #25D366;
+            color: var(--white);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .tabs {
+            background: var(--white);
+            border-radius: 12px;
+            margin-top: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .tab-links {
+            display: flex;
+            background: var(--gray-light);
+            padding: 1rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .tab-links::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-link {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .tab-link.active {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .tab-content {
+            padding: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-light);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .courses-section h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .course-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .course-list li {
+            padding: 1rem;
+            background: var(--gray-light);
+            border-radius: 8px;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .course-list li:hover {
+            background: var(--primary-light);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        .application-form {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin: 2rem 0;
+        }
+
+        .application-form h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(146, 167, 146, 0.2);
+        }
+
+
+        @media (max-width: 1024px) {
+            .college-info {
+                flex-direction: column;
+            }
+
+            .college-image-container {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: 600px;
+            }
+
+            .college-details {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .college-header {
+                padding: 2rem 0;
+            }
+
+            .college-image-container {
+                height: 200px;
+            }
+
+            .college-logo {
+                width: 80px;
+                height: 80px;
+                font-size: 1.5rem;
+            }
+
+            .college-name h1 {
+                font-size: 2rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+
+
+        
+    </style>
 </head>
-<style>
-  * {
-    box-sizing: border-box;
-    margin : 0;
-    padding: 0;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-}
-
-.container {
-    width: 80%;
-    margin: 0 auto;
-}
-
-.header {
-    background-color: #fff;
-    padding: 20px 0;
-    border-bottom: 1px solid #ddd;
-}
-
-.university-info {
-    display: flex;
-    align-items: center;
-}
-
-.university-logo {
-    width: 80px;
-    height: auto;
-    margin-right: 20px;
-}
-
-.university-details h1 {
-    font-size: 24px;
-    margin-bottom: 5px;
-}
-
-.university-details p {
-    font-size: 16px;
-    color: #666;
-}
-
-.rating {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
-}
-
-.rating span {
-    margin-right: 5px;
-}
-
-.actions {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-}
-
-.action-btn {
-    padding: 10px 20px;
-    font-size: 14px;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.download-btn {
-    background-color: #d9534f;
-}
-
-.whatsapp-btn {
-    background-color: #25d366;
-}
-
-.navigation {
-    background-color: #84d9f7;
-    padding: 10px 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #ddd;
-}
-
-.navigation ul {
-    display: flex;
-    justify-content: space-between;
-    list-style-type: none;
-}
-
-.navigation ul li {
-    margin-right: 20px;
-}
-
-.navigation ul li a {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
-}
-
-.info-cards {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.card {
-    background-color: #fff;
-    text-align: center;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    width: 22%;
-}
-
-.card img {
-    margin-bottom: 10px;
-}
-
-.courses ul {
-    list-style-type: none;
-    margin-top: 10px;
-}
-
-.courses ul li {
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-.online-application {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-}
-
-.online-application form {
-    display: flex;
-    flex-direction: column;
-}
-
-.online-application label {
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.online-application input,
-.online-application select {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.online-application button {
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-</style>
 <body>
-
-    <!-- Header Section -->
-    <header class="header">
+    <header class="college-header">
         <div class="container">
-            <div class="university-info">
-                <img src="university-logo.png" alt="University Logo" class="university-logo">
-                <div class="university-details">
-                    <h1><%= college.name %></h1>
-                    <p><span class="location"><%= college.district %> (<%= college.state %>)</span> Approved by: UGC</p>
-                    <div class="rating">
-                      <span>4.5</span> <!-- Assuming this rating is static or coming from somewhere else -->
+            <div class="college-info">
+                <div class="college-image-container">
+                    <img src="university-logo.png" alt="University Logo" class="university-logo">
+                </div>
+                <div class="college-details">
+                    <div class="college-name">
+                        <h1><%= college.name %></h1>
+                        <p class="college-location"><%= college.district %> (<%= college.state %>) | Approved by: UGC</p>
+                        <div class="rating">
+                            <span><%= college.rating || '4.5' %></span>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary">Download Brochure</button>
+                            <button class="btn btn-secondary">WhatsApp</button>
+                        </div>
                     </div>
-                  </div>
-                  
-            </div>
-            <div class="actions">
-                <button class="action-btn download-btn">Download Brochure</button>
-                <button class="action-btn whatsapp-btn">WhatsApp</button>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Navigation Section -->
-    <nav class="navigation">
-        <ul>
-            <li><a href="#">Overview</a></li>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Courses & Fees</a></li>
-            <li><a href="#">Gallery</a></li>
-            <li><a href="#">Faculty</a></li>
-            <li><a href="#">Recruitment</a></li>
-            <li><a href="#">Questions</a></li>
-            <li><a href="#">Scholarship</a></li>
-            <li><a href="#">FAQs</a></li>
-        </ul>
-    </nav>
+    <div class="container">
+        <div class="tabs">
+            <div class="tab-links">
+                <button class="tab-link active" data-tab="overview">Overview</button>
+                <button class="tab-link" data-tab="about-us">About Us</button>
+                <button class="tab-link" data-tab="courses-fees">Courses & Fees</button>
+                <button class="tab-link" data-tab="gallery">Gallery</button>
+                <button class="tab-link" data-tab="faculty">Faculty</button>
+            </div>
 
-    <!-- Info Cards Section -->
-    <section class="info-cards container">
-        <div class="card">
-            <img src="calendar-icon.png" alt="Established Icon">
-            <p>Established in</p>
-            <h3>2013</h3>
-        </div>
-        <div class="card">
-            <img src="package-icon.png" alt="Package Icon">
-            <p>Max Package</p>
-            <h3>24 LPA</h3>
-        </div>
-        <div class="card">
-            <img src="faculty-icon.png" alt="Faculty Icon">
-            <p>Total Faculty</p>
-            <h3>300+</h3>
-        </div>
-        <div class="card">
-            <img src="college-type-icon.png" alt="College Type Icon">
-            <p>College Type</p>
-            <h3>Private</h3>
-        </div>
-    </section>
+            <div class="tab-content">
+                <!-- Overview Content -->
+                <div id="overview" class="tab-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📅</div>
+                            <div class="stat-value"><%= college.establishedIn || 'N/A' %></div>
+                            <div class="stat-label">Established in</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💼</div>
+                            <div class="stat-value"><%= college.maxPackage || 'N/A' %> LPA</div>
+                            <div class="stat-label">Max Package</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">👨‍🏫</div>
+                            <div class="stat-value"><%= college.noOfFaculty || 'N/A' %></div>
+                            <div class="stat-label">Total Faculty</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🏫</div>
+                            <div class="stat-value"><%= college.type || 'N/A' %></div>
+                            <div class="stat-label">College Type</div>
+                        </div>
+                    </div>
 
-    <!-- Courses Section -->
-    <section class="courses container">
-        <h2>Top Courses</h2>
-        <ul>
-            <li>Engineering and Technology</li>
-            <li>Basic & Applied Sciences</li>
-            <li>Humanities</li>
-            <li>LAW</li>
-            <li>Hospitality And Hotel Management</li>
-        </ul>
-    </section>
 
-    <!-- Online Application Section -->
-    <section class="online-application container">
-        <h2>Online Application</h2>
-        <form action="/apply/submit/<%= college._id %>" method="POST">
+
+                    <div class="courses-section">
+                        <h2>Top Courses</h2>
+                        <% if (college.courses && college.courses.length > 0) { %>
+                          <ul class="course-list">
+                            <% college.courses.forEach(course => { %>
+                              <li><%= course.deptName || 'Unnamed Department' %></li>
+                            <% }); %>
+                          </ul>
+                        <% } else { %>
+                          <p>No courses available for this college.</p>
+                        <% } %>
+                      </div>
+                      
+                    
+                    
+                </div>
+
+
+            
+
+
+<div class="application-form">
+    <h2>Online Application</h2>
+    <form action="/apply/submit/<%= college._id %>" method="POST">
+        <div class="form-group">
             <label for="name">Full name</label>
             <input type="text" id="name" placeholder="Enter your name...">
-
+ </div>
+        <div class="form-group">
             <label for="email">Email Address</label>
             <input type="email" id="email" placeholder="Enter your email...">
-
+    </div>
+        <div class="form-group">
             <label for="contact">Contact Number</label>
             <input type="text" id="contact" placeholder="Enter your contact number...">
-
+  </div>
+        <div class="form-group">
             <label for="course">Courses</label>
-         <!-- Display department name -->
-<h2>Courses Offered by <%= department.deptName %> at <%= college.name %></h2>
+            <select id="course">
+                <option value="" disabled selected>Select a course</option>
+                <% department.subjects.forEach(subject => { %>
+                    <option value="<%= subject._id %>"><%= subject.name %></option>
+                <% }); %>
+               </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Apply Now</button>
+    </form>
+</div>
 
-<!-- Dropdown for selecting a course -->
-<select id="course">
-    <option value="" disabled selected>Select a course</option>
-    <% department.subjects.forEach(subject => { %>
-        <option value="<%= subject._id %>"><%= subject.name %></option>
-    <% }); %>
-</select>
 
-              
 
-            <button type="submit">Apply Now</button>
-        </form>
-    </section>
+                <!-- About Us Content -->
+                <div id="about-us" class="tab-section">
+                    <h2>About Us</h2>
+                    <p><%= college.about || "Details about the college go here." %></p>
+                </div>
 
+               <!-- Courses & Fees Content -->
+<div id="courses-fees" class="tab-section">
+    <div class="courses-section">
+      <h2>Top Courses</h2>
+      <% if (college.courses && college.courses.length > 0) { %>
+        <% college.courses.forEach(department => { %>
+          <div class="department-section">
+            <h3><%= department.deptName || 'Unnamed Department' %></h3>
+            <% if (department.subjects && department.subjects.length > 0) { %>
+              <ul class="subject-list">
+                <% department.subjects.forEach(subject => { %>
+                  <li>
+                    <strong>Subject:</strong> <%= subject.name %><br>
+                    <strong>Fee per Semester:</strong> ₹<%= subject.feePerSemester %><br>
+                    <strong>Number of Semesters:</strong> <%= subject.noOfSemesters %>
+                  </li>
+                <% }); %>
+              </ul>
+            <% } else { %>
+              <p>No subjects available for this department.</p>
+            <% } %>
+          </div>
+        <% }); %>
+      <% } else { %>
+        <p>No courses available for this college.</p>
+      <% } %>
+    </div>
+  </div>
+  
+
+                <!-- Gallery Content -->
+                <div id="gallery" class="tab-section">
+                    <h2>Gallery</h2>
+                    <p>Gallery content will appear here.</p>
+                </div>
+
+                <!-- Faculty Content -->
+                <div id="faculty" class="tab-section">
+                    <h2>Faculty</h2>
+                    <p>Faculty details will appear here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        const tabLinks = document.querySelectorAll('.tab-link');
+        const tabSections = document.querySelectorAll('.tab-section');
+
+        tabLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                // Remove active class from all tabs and sections
+                document.querySelector('.tab-link.active').classList.remove('active');
+                document.querySelector('.tab-section.active').classList.remove('active');
+
+                // Add active class to the clicked tab and corresponding section
+                link.classList.add('active');
+                const targetTab = document.getElementById(link.dataset.tab);
+                targetTab.classList.add('active');
+            });
+        });
+    </script>
+
+    <style>
+       .tab-links {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-link {
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            background: #f9f9f9;
+            cursor: pointer;
+        }
+
+      
+
+        .tab-section {
+            display: none;
+        }
+
+        .tab-section.active {
+            display: block;
+        }
+
+      
+
+   
+    </style>
 </body>
+
 </html>
-<%- include('../partials/footer') %>
+
+
+
+

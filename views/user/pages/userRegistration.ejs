@@ -1,336 +1,652 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SIGNUP</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evSXhuddled7su3YrYtEC9zvDjuQm6LGOaRWE4fWLfb0+TvLTOvRW2YvCAyM9JbQzjs"
+      crossorigin="anonymous"
+    />
+    <script type="module" src="/config/google.js"></script>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIGNUP</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evSXhuddled7su3YrYtEC9zvDjuQm6LGOaRWE4fWLfb0+TvLTOvRW2YvCAyM9JbQzjs" crossorigin="anonymous">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
 
-  <style>
-    body {
-      background-color: #E9FDFF;
-      margin: 0;
-      padding: 0;
-      overflow-x: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.1),
+            rgba(146, 167, 146, 0.2)
+          ),
+          url("/user/img/bg-blur.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
 
-    .container-fluid {
-      padding: 0;
-    }
+      .signup-container {
+        background: white;
+        padding: 60px;
+        border-radius: 24px;
+        width: 100%;
+        max-width: 1070px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        display: grid;
+        grid-template-columns: 1fr 1px 1fr;
+        gap: 50px;
+        position: relative;
+      }
 
-    .row {
-      height: 100%;
-    }
+      .signup-left {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        padding-top: 10px;
+        position: relative;
+        background: linear-gradient(135deg, #f0f4f0, #e6ebe6);
+        border-radius: 12px;
+        overflow: hidden;
+      }
 
-    .col {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
+      .signup-left::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 255, 255, 0.3) 0%,
+          rgba(255, 255, 255, 0) 70%
+        );
+        animation: ripple 15s linear infinite;
+      }
 
-    .heading {
-      margin-inline-start: 50px;
-    }
+      @keyframes ripple {
+        0% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(50%, 50%);
+        }
+      }
 
-    .logo {
-      position: relative;
-      display: inline-block;
-      align-self: flex-start;
-      overflow-wrap: break-word;
-      font-family: 'Montserrat';
-      font-weight: 600;
-      font-size: 1.5rem;
-      letter-spacing: 2.6px;
-      color: #006D77;
-      margin-bottom: 50px;
-    }
+      .signup-left img {
+        width: 100%;
+        max-width: 270px;
+        height: auto;
+        position: relative;
+        z-index: 1;
+        transition: transform 0.3s ease;
+      }
 
-    .starts-here {
-      margin: 0 24px;
-      align-self: flex-start;
-      overflow-wrap: break-word;
-      font-family: 'Sorts Mill Goudy';
-      font-weight: 400;
-      font-size: 2rem;
-      letter-spacing: 2.9px;
-      color: #006D77;
-    }
+      .signup-left img:hover {
+        transform: scale(1.05);
+      }
 
-    .your-bright-future {
-      position: absolute;
-      left: 30px;
-      top: 0;
-      overflow-wrap: break-word;
-      font-family: 'Sorts Mill Goudy';
-      font-weight: 400;
-      font-size: 42px;
-      letter-spacing: 2.9px;
-      color: #006D77;
-    }
+      .brand-name {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2d392d;
+        text-align: center;
+        margin-top: 20px;
+        position: relative;
+        z-index: 1;
+      }
 
-    .register-now {
-      position: relative;
-      overflow-wrap: break-word;
-      font-family: 'Sorts Mill Goudy';
-      font-weight: 400;
-      font-size: 66px;
-      letter-spacing: 4.6px;
-      color: #006D77;
-    }
+      .brand-slogan {
+        font-size: 16px;
+        color: #8fa98d;
+        text-align: center;
+        max-width: 80%;
+        position: relative;
+        z-index: 1;
+      }
 
-    .container-2,
-    .container-4 {
-      margin: 0 auto;
-    }
+      .signup-form {
+        background-color: #fff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 40px;
+      }
 
-    .container-2 {
-      margin: 50px 172.9px 555px 0;
-      display: flex;
-      flex-direction: column;
-      box-sizing: border-box;
-    }
+      .signup-right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      }
 
-    .container-4 {
-      box-shadow: -4px -4px 10px 0px rgba(0, 0, 0, 0.2), 4px 4px 10px 0px rgba(0, 0, 0, 0.2);
-      border-radius: 15px;
-      background: #5dadb8;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      margin-left: 100px;
-      height: auto;
-      width: 400px;
-      padding: 30px;
-    }
+      .user-icon {
+        width: 80px;
+        height: 80px;
+        background: #92a792;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    .img {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 800px;
-      height: auto;
-    }
+      .user-icon svg {
+        width: 40px;
+        height: 40px;
+        fill: white;
+      }
 
-    .already-auser-log-in {
-      margin-top: 20px;
-      text-align: center;
-    }
+      .divider {
+        background: #e0e0e0;
+        height: 100%;
+        width: 1px;
+      }
 
-    .container-7 {
-      position: relative;
-      display: flex;
-      flex-direction: row;
-      width: fit-content;
-    }
+      .title {
+        font-size: 28px;
+        color: #333;
+        margin-bottom: -9px;
+        margin-top: -9px;
+        text-align: center;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
 
-    .form-group {
-      margin-bottom: 15px;
-      display: flex;
-      flex-direction: column;
-    }
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+      }
 
-    .form-group input {
-      background-color: #E9FDFF;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 8px 12px;
-      font-size: 16px;
-    }
+      .form-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
 
-    .form-group input:focus {
-      border-color: #66afe9;
-      outline: none;
-    }
+      .input-group {
+        position: relative;
+        margin-bottom: 15px;
+      }
 
-    .form-input {
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      padding: 8px 12px;
-      font-size: 16px;
-    }
+      .input-group input {
+        width: 100%;
+        padding: 12px 40px;
+        border: 1px solid #e0e0e0;
+        border-radius: 50px;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.3s;
+      }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      min-width: 270px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-sizing: border-box;
-      margin-bottom: 10px;
-    }
+      .input-group svg {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 20px;
+        height: 20px;
+        fill: #92a792;
+      }
 
-    .form-group button {
-      background-color: #006D77;
-      color: #fff;
-      border: none;
-      border-radius: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-      width: 150px;
-      height: 35px;
-      margin-left: 60px;
-      cursor: pointer;
-    }
+      .input-group input:focus {
+        border-color: #92a792;
+      }
 
-    .form-group button:hover {
-      background-color: #005799;
-    }
+      .links {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+      }
 
-    .form-container {
-      text-align: center;
-    }
+      .links a {
+        color: #666;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
 
-    .google-sign-up a {
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      color: #000;
-      text-decoration: none;
-      display: inline-block;
-      cursor: pointer;
-      justify-content: center;
-      align-items: center;
-    }
+      .links a:hover {
+        color: #92a792;
+      }
 
-    .google-sign-up img {
-      height: 25px;
-      width: 25px;
-      justify-content: center;
-      align-items: center;
-    }
+      .signup-btn {
+        background: #2d392d;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 50px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+        max-width: 230px;
+        margin: 20px auto 0;
+        display: block;
+        text-align: center;
+      }
 
-    .google-sign-up a:hover {
-      background-color: #eee;
-    }
+      .signup-btn:hover {
+        background: #374837;
+      }
 
-    .or {
-      font-weight: bold;
-      font-size: medium;
-    }
+      .welcome-text {
+        color: #666;
+        text-align: center;
+        font-size: 14px;
+      }
 
-    @media (max-width: 768px) {
-      .container-4 {
+      .terms-checkbox {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+      }
+
+      .terms-checkbox input {
+        margin-right: 10px;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+      }
+
+      .modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 40px;
+        border: none;
         width: 90%;
+        max-width: 600px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transform: scale(0.7);
+        opacity: 0;
+        transition: all 0.3s ease;
       }
 
-      .img {
-        width: 150px;
+      .modal.active .modal-content {
+        transform: scale(1);
+        opacity: 1;
       }
-    }
-  </style>
-</head>
 
-<body>
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col">
-        <div>
-          <div class="logo">
-            LOGO
+      .modal-title {
+        font-size: 24px;
+        color: #2d392d;
+        margin: 0;
+      }
+
+      .close {
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .close:hover {
+        color: #2d392d;
+      }
+
+      .modal-body {
+        max-height: 60vh;
+        overflow-y: auto;
+        padding-right: 10px;
+      }
+
+      .modal-body::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .modal-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+      }
+
+      .modal-body::-webkit-scrollbar-thumb {
+        background: #92a792;
+        border-radius: 4px;
+      }
+
+      .modal-body h3 {
+        color: #2d392d;
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+
+      .modal-body p,
+      .modal-body li {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 10px;
+      }
+
+      .modal-body ul,
+      .modal-body ol {
+        padding-left: 20px;
+        margin-bottom: 15px;
+      }
+
+      @media (max-width: 768px) {
+        .signup-container {
+          grid-template-columns: 1fr;
+          padding: 24px;
+          gap: 24px;
+        }
+
+        .divider {
+          display: none;
+        }
+
+        .signup-left img {
+          max-width: 200px;
+        }
+
+        .modal-content {
+          padding: 20px;
+          margin: 10% auto;
+        }
+      }
+      .google {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .google a {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 10px 100px;
+        font-size: 16px;
+        color: #000;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .google a img {
+        margin-right: 10px;
+      }
+
+      .google a:hover {
+        background-color: #eee;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="signup-container">
+      <div class="signup-left">
+        <a href="/">
+          <img
+            src="user/img/IMG_0830.PNG"
+            alt="College Image"
+          />
+        </a>
+        <p class="brand-slogan">Empowering minds, shaping futures</p>
+      </div>
+      <div class="divider"></div>
+      <div class="signup-right">
+        <div class="user-icon">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+            />
+          </svg>
+        </div>
+        <h1 class="title">Signup</h1>
+        <p class="welcome-text">Join our community and start your journey!</p>
+        <form action="/signup" method="post">
+          <div class="input-group">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+              />
+            </svg>
+            <input
+              type="text"
+              placeholder="Username"
+              id="username"
+              name="username"
+              required
+            />
           </div>
-
-          <div class="container-7">
-            <div class="heading">
-              <div class="container-2">
-                <span class="starts-here">
-                  Starts here
-                </span>
-                <div class="container">
-                  <span class="your-bright-future">
-                    Your bright future
-                  </span>
-                  <span class="register-now">
-                    Register Now.
-                  </span>
-                </div>
-                <img class="img" src="../user/img/iconBoy.png" alt="Boy with backpack" />
-              </div>
-            </div>
-
-            <div class="container-4">
-              <div class="form-container">
-                <div class="form-group google-sign-up">
-                  <a href="#"><img src="/user/img/googleIcon.png" alt="">Sign Up with Google</a>
-                </div>
-                <span class="or">or</span>
-                <br><br>
-              
-
-<% if (errors && errors.length > 0) { %>
-  <div class="alert alert-danger" role="alert">
-    <ul>
-      <% errors.forEach(function(error) { %>
-        <li><%= error %></li>
-      <% }) %>
-    </ul>
-  </div>
-<% } else { %>
-  <div class="alert alert-info" role="alert">
-    Welcome! Please fill in the form below to register.
-  </div>
-  <br>
-  <br>
-<% } %></br>
-                <form action="/signup" method="post" onsubmit="return validateForm()" >
-                  <div class="form-group">
-                    <input type="text" id="username" name="username" placeholder="Enter your full name" required>
-                  </div>
-                  <div class="form-group">
-                    <input type="tel" id="mobileNumber" name="mobileNumber" placeholder="Enter your Mobile Number" required>
-                  </div>
-                  <div class="form-group">
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                  </div>
-                  <div class="form-group">
-                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
-                  </div>
-                  <div class="form-group">
-                    <button type="submit">Register</button>
-                  </div>
-                </form>
-                <div class="already-auser-log-in">
-                  <span>Already a user? <a href="/login">Log In</a></span>
-                </div>
-              </div>
-            </div>
+          <div class="input-group">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+              />
+            </svg>
+            <input
+              type="email"
+              placeholder="Email"
+              id="email"
+              name="email"
+              required
+            />
           </div>
+          <div class="input-group">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+              />
+            </svg>
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              id="mobileNumber"
+              name="mobileNumber"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"
+              />
+            </svg>
+            <input
+              type="password"
+              placeholder="Password"
+              id="password"
+              name="password"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"
+              />
+            </svg>
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              id="confirmPassword"
+              name="confirmPassword"
+              required
+            />
+          </div>
+          <div class="terms-checkbox">
+            <label for="terms"
+              ><a href="#" id="termsLink">Terms and Conditions</a></label
+            >
+          </div>
+          <button type="submit" onclick="validateForm()" class="signup-btn">Sign Up</button>
+        </form>
+        <div class="links">
+          <span>Already have an account? <a href="/login">Login</a></span>
+        </div>
+        <div class="google">
+          <a
+            class="btn btn-outline-dark"
+            id="google-sign-up"
+            href=""
+            role="button"
+            style="text-transform: none"
+          >
+            <img
+              width="20px"
+              style="margin-right: 5px"
+              alt="Google sign-in"
+              src="/user/img/googleIcon.png"
+            />
+            Login with Google
+          </a>
         </div>
       </div>
     </div>
-  </div>
 
-  <script>
-    function validateForm() {
-      var mobileNumber = document.getElementById('mobileNumber').value;
-      var password = document.getElementById('password').value;
-      var confirmPassword = document.getElementById('confirmPassword').value;
+    <div id="termsModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Terms and Conditions</h2>
+          <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+          <p>
+            Welcome to our service. By using our services, you agree to comply
+            with and be bound by the following terms and conditions:
+          </p>
 
-      var mobileNumberRegex = /^[0-9]{10}$/;
-      if (!mobileNumber.match(mobileNumberRegex)) {
-        alert('Please enter a valid 10-digit mobile number.');
-        return false;
+          <h3>1. Eligibility</h3>
+          <p>
+            You must be at least 18 years old to use this service. By agreeing
+            to these terms, you represent and warrant that you are at least 18
+            years of age.
+          </p>
+
+          <h3>2. Account Creation</h3>
+          <p>
+            When creating an account, you agree to provide accurate, current,
+            and complete information. You are solely responsible for maintaining
+            the confidentiality of your account and password.
+          </p>
+
+          <h3>3. Prohibited Activities</h3>
+          <p>
+            You agree not to engage in any of the following prohibited
+            activities:
+          </p>
+          <ul>
+            <li>Using the service for any illegal or unauthorized purpose</li>
+            <li>
+              Attempting to interfere with or disrupt the service or servers
+            </li>
+            <li>
+              Impersonating any person or entity, or falsely stating or
+              misrepresenting your affiliation with a person or entity
+            </li>
+          </ul>
+
+          <h3>4. Intellectual Property</h3>
+          <p>
+            The content, organization, graphics, design, and other matters
+            related to our service are protected under applicable copyrights and
+            other proprietary laws. The copying, redistribution, use, or
+            publication by you of any such content is strictly prohibited.
+          </p>
+
+          <h3>5. Termination</h3>
+          <p>
+            We reserve the right to terminate or suspend your account and access
+            to the service, without prior notice or liability, for any reason
+            whatsoever, including without limitation if you breach these Terms.
+          </p>
+
+          <h3>6. Changes to Terms</h3>
+          <p>
+            We reserve the right to modify or replace these Terms at any time.
+            It is your responsibility to check these Terms periodically for
+            changes.
+          </p>
+
+          <p>
+            For the full terms and conditions, please visit our website. By
+            using our service, you acknowledge that you have read and understood
+            these terms and agree to be bound by them.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var modal = document.getElementById("termsModal");
+      var btn = document.getElementById("termsLink");
+      var span = document.getElementsByClassName("close")[0];
+
+      btn.onclick = function () {
+        modal.style.display = "block";
+        setTimeout(() => modal.classList.add("active"), 10);
+      };
+
+      span.onclick = function () {
+        modal.classList.remove("active");
+        setTimeout(() => (modal.style.display = "none"), 300);
+      };
+
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.classList.remove("active");
+          setTimeout(() => (modal.style.display = "none"), 300);
+        }
+      };
+
+      function validateForm() {
+        var username = document.getElementById("username").value;
+        var mobileNumber = document.getElementById("mobileNumber").value;
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        var confirmPassword = document.getElementById("confirmPassword").value;
+
+        var mobileNumberRegex = /^[0-9]{10}$/;
+        if(!username){
+          alert("Please enter a valid User Name.");
+          return false;
+        }
+        if (!mobileNumber.match(mobileNumberRegex)) {
+          alert("Please enter a valid 10-digit mobile number.");
+          return false;
+        }
+
+        if (password !== confirmPassword) {
+          alert("Passwords do not match.");
+          return false;
+        }
+        return true;
       }
-
-      if (password !== confirmPassword) {
-        alert('Passwords do not match.');
-        return false;
-      }
-
-      return true;
-    }
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>
