@@ -59,7 +59,6 @@ const verifyLogin = async (req, res) => {
 const loadHome = async (req, res) => {
   try {
     const { user } = req.session;
-    console.log("Home page:",user);
     const topColleges = await College.find()
       .sort({ "admissions.length": -1 })
       .limit(10)
@@ -288,6 +287,7 @@ const loadAdmissions = async (req, res) => {
       courses: [], 
       selectedFilters, 
     });
+    
   } catch (error) {
     console.error("Error loading admissions page:", error);
     res.status(500).send("Server error");
@@ -376,24 +376,56 @@ const filterAdmissions = async (req, res) => {
 
 
 
+
+
+
+
 const loadDeptAdmissions = async (req, res) => {
   try {
-    const departmentId = req.params.deptId;
-    req.session.deptId = departmentId;
-    const department = await Department.findById(departmentId);
-    if (!department) {
-      return res.status(404).send("Department not found");
-    }
-    const colleges = await College.find({ "courses.deptId": departmentId });
-    res.render("./user/pages/deptAdmissions", {
-      colleges,
-      department,
-    });
+      const departmentId = req.params.deptId;
+      console.log("Received deptId:", departmentId);
+
+      // Clear previous session data
+      if (req.session.deptId) {
+          console.log("Clearing existing session deptId:", req.session.deptId);
+          req.session.deptId = null;
+      }
+
+      // Validate departmentId
+      if (!departmentId || !mongoose.Types.ObjectId.isValid(departmentId)) {
+          console.error("Invalid department ID:", departmentId);
+          return res.status(400).send("Invalid department ID");
+      }
+
+      req.session.deptId = departmentId;
+
+      // Fetch the department
+      const department = await Department.findById(departmentId);
+      if (!department) {
+          console.error("Department not found for ID:", departmentId);
+          return res.status(404).send("Department not found");
+      }
+
+      // Fetch colleges associated with the department
+      const colleges = await College.find({ "courses.deptId": departmentId });
+      if (!colleges.length) {
+          console.log("No colleges found for department:", departmentId);
+      }
+
+      res.render("./user/pages/deptAdmissions", {
+          colleges,
+          department,
+      });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Server error");
+      console.error("Error in loadDeptAdmissions:", error);
+      res.status(500).send("Server error");
   }
 };
+
+
+
+
+
 
 const loadCollegeApplication = async (req, res) => {
   try {

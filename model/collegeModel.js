@@ -100,6 +100,11 @@ const collegeSchema = new Schema({
     type: String,
     trim: true,
   },
+  
+  profilePicture: {
+    type: String,
+  },
+
   images: {
     type: [imageSchema],
     required: true,

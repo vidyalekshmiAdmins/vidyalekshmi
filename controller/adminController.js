@@ -159,6 +159,9 @@ const loadAddCollege = async (req, res) => {
   }
 };
 
+
+
+
 const addCollege = async (req, res) => {
   try {
     const {
@@ -209,11 +212,14 @@ const addCollege = async (req, res) => {
       return res.status(400).json({ message: 'Established year should be a positive integer.' });
     }
 
-    // Extracting image details from the request
-    const images = req.files.map(file => ({
-      name: file.originalname,
-      path: file.path
-    }));
+       
+
+    const images = req.files['collegeImage'] 
+    ? req.files['collegeImage'].map(file => ({
+        name: file.originalname,
+        path: `admin/uploads/${file.filename}`
+      })) 
+    : [];
 
     // Hash the password
     const salt = await bcrypt.genSalt(10);

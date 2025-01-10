@@ -100,7 +100,14 @@ adminRoute.get("/useractions",adminAuth.isLogin , adminController.userAction);
 
 adminRoute.get('/College',adminAuth.isLogin ,adminController.collegeList);
 adminRoute.get('/addCollege',adminAuth.isLogin ,adminController.loadAddCollege);
-adminRoute.post('/addCollege', upload.array('images', 5),adminAuth.isLogin , adminController.addCollege);
+adminRoute.post('/addCollege',upload.fields([
+  { name: 'collegeImage', maxCount: 10 }, // Handle multiple images
+  { name: 'documents', maxCount: 10 },
+]),
+adminAuth.isLogin , adminController.addCollege);
+
+
+
 
 adminRoute.get('/collegeDetails', adminAuth.isLogin, adminController.loadCollegeDetails);
 

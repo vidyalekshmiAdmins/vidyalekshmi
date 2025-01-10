@@ -63,6 +63,7 @@
         }
 
         .college-card img {
+        
             width: 60px;
             height: 60px;
             margin-bottom: 10px;
@@ -118,22 +119,29 @@
     <main>
         <div class="college-list">
             <% if (colleges && colleges.length > 0) { %>
-                <% colleges.forEach(college => { %>
-                    <div class="college-card">
-                        <a href="/admin/collegeDetails?id=<%= college._id %>">
-                            <img src="<%= college.images[0]?.path || '/admin/assets/imgs/placeholder.jpg' %>" alt="<%= college.name %>">
-                        </a>
-                        <h2><%= college.name %></h2>
-                        <p><strong>State:</strong> <%= college.state %></p>
-                        <form action="/admin/deleteCollege/<%= college._id %>" method="POST" onsubmit="return confirmDelete();">
-                            <button type="submit" class="delete-btn">🗑️ Delete</button>
-                        </form>
-                    </div>
-                <% }); %>
+              <% colleges.forEach(college => { %>
+                <div class="college-card">
+                  <a href="/admin/collegeDetails?id=<%= college._id %>">
+                    <!-- Display primary image or placeholder -->
+                    <img src="/admin/uploads/<%= college.images[0] %>" alt="<%= college.name %>">
+                  
+                
+                </a>
+                  <h2><%= college.name %></h2>
+                  <p><strong>State:</strong> <%= college.state %></p>
+                  <p><strong>Established In:</strong> <%= college.establishedIn || 'N/A' %></p>
+                  <form action="/admin/deleteCollege/<%= college._id %>" method="POST" onsubmit="return confirmDelete();">
+                    <button type="submit" class="delete-btn">🗑️ Delete</button>
+                  </form>
+                </div>
+              <% }); %>
             <% } else { %>
-                <p class="no-colleges">No colleges added yet!</p>
+              <p class="no-colleges">No colleges added yet!</p>
             <% } %>
-        </div>
+          </div>
+          
+          
+          
     </main>
 
     <script>
