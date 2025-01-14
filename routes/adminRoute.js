@@ -12,36 +12,50 @@ const isStaffVerified=require('../middleware/staffAuth')
 require('dotenv').config()
 
 
+// Configure Multer for file uploads
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    
-    cb(null, path.join(__dirname, '../public/admin/uploads'));},
-
-
-  filename: function (req, file, cb) {
-    const name=Date.now()+ '-'+file.originalname;
-    cb(null,name)
-    // cb(null, file.fieldname  + Date.now() + path.extname(file.originalname));
+  destination: (req, file, cb) => {
+    const uploadPath = path.join(__dirname, '../public/admin/uploads');
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: (req, file, cb) => {
+    const timestamp = Date.now();
+    const uniqueName = `${timestamp}-${file.originalname}`;
+    cb(null, uniqueName);
   }
 });
 
-const upload = multer({ storage: storage });
-module.exports = {upload};
-
-
-
-
-
-
-adminRoute.use(express.json());
-adminRoute.use(express.urlencoded({ extended: true }));
-adminRoute.use((req, res, next) => {
-  req.app.set('layout', 'admin/layout/admin');
-  next();
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    if (!allowedTypes.includes(file.mimetype)) {
+      return cb(new Error('Invalid file type'), false);
+    }
+    cb(null, true);
+  },
+  limits: { fileSize: 5 * 1024 * 1024 } // Limit files to 5MB
 });
 
+// Middleware to serve static files from the uploads directory
+adminRoute.use('/admin/uploads', express.static(path.join(__dirname, '../public/admin/uploads')));
 
+// Middleware for JSON and URL-encoded data
+adminRoute.use(express.json());
+adminRoute.use(express.urlencoded({ extended: true }));
 
+// Error-handling middleware
+adminRoute.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ error: err.message });
+  } else if (err) {
+    return res.status(500).json({ error: 'Server error' });
+  }
+  next();
+});
 
 
 
@@ -101,8 +115,7 @@ adminRoute.get("/useractions",adminAuth.isLogin , adminController.userAction);
 adminRoute.get('/College',adminAuth.isLogin ,adminController.collegeList);
 adminRoute.get('/addCollege',adminAuth.isLogin ,adminController.loadAddCollege);
 adminRoute.post('/addCollege',upload.fields([
-  { name: 'collegeImage', maxCount: 10 }, // Handle multiple images
-  { name: 'documents', maxCount: 10 },
+  { name: 'collegeImage', maxCount: 10 },
 ]),
 adminAuth.isLogin , adminController.addCollege);
 

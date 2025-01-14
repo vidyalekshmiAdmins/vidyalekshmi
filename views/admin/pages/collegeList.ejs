@@ -123,8 +123,8 @@
                 <div class="college-card">
                   <a href="/admin/collegeDetails?id=<%= college._id %>">
                     <!-- Display primary image or placeholder -->
-                    <img src="/admin/uploads/<%= college.images[0] %>" alt="<%= college.name %>">
-                  
+                    <img src="<%= college.images && college.images[0] ? '/admin/uploads/' + college.images[0].path : '/admin/assets/images/placeholder.png' %>" alt="<%= college.name %>">
+
                 
                 </a>
                   <h2><%= college.name %></h2>
